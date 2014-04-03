@@ -5,7 +5,7 @@ object msgKind extends Enumeration{
   }
 import msgKind._
 
-class UserMessage(kind:msgKind, data: Object, timestamp:TimeStamp) extends Serializable {
+class UserMessage(kind:msgKind, data: Object, sendNode:UserNode) extends Serializable {
   
   def getKind() : msgKind = 
   {
@@ -17,10 +17,9 @@ class UserMessage(kind:msgKind, data: Object, timestamp:TimeStamp) extends Seria
     return data;
   }
   
-  def getTimeStamp() : TimeStamp = 
+  def getSender() : UserNode = 
   {
-    return timestamp;
+    return sendNode;
   }
-  
   
 }

@@ -5,7 +5,7 @@ import java.util.ArrayList
 import scala.util.control.Breaks._
 
 
-class Group(name:String){
+class Group(name:String) extends Serializable{
   val id:String = "";
   val members:TreeMap[String,UserNode] = new TreeMap[String, UserNode]
   val lookup:HashMap[String,UserNode] = new HashMap[String, UserNode]
@@ -14,16 +14,19 @@ class Group(name:String){
   
   def view(){}
   
+  def returnMembers() : ArrayList[UserNode] =
+  {
+    var memlist:ArrayList[UserNode] = new ArrayList[UserNode]
+    memlist.addAll(members.values())
+    return memlist
+  }
+  
   def addMembers(uname: String, insUserNode:UserNode)
   {
-    //TODO: Compute Hash
-    //val hash_val = "abc";
     val hash_val:String = calculate_hash.md5(uname).toString()
     
     println("In addMembers hash for node "+insUserNode.getName+" is "+hash_val)
-    members.put(hash_val, insUserNode)
-    
-   
+    members.put(hash_val, insUserNode)   
   }
   
    def getNodeFromHash(in_hash : String) : UserNode =
@@ -48,9 +51,7 @@ class Group(name:String){
     	  j+=1
     	}
     	
-    	return members.get(arrtemp.get(i))
-    	
-       
+    	return members.get(arrtemp.get(i))       
      
    }
   
