@@ -9,29 +9,38 @@ import java.util.logging.FileHandler
 import java.util.logging.SimpleFormatter
 import java.io.IOException
 import java.util.logging.Handler
+import javax.swing.ImageIcon
 
 
 object Shutterbug {
     RemoteActor.classLoader = getClass().getClassLoader()
     var curnode:UserNode = null
+    var curGroup:Group = null
     var logger:Logger = Logger.getLogger("MyLog");  
     var fh: FileHandler = null;
+    var mcs:MulticastService = new MulticastService
     def main(args: Array[String]) {
-      val one = new UserNode("localhost",10111,"a")
-      val two = new UserNode("localhost",10112,"b")
-      val three = new UserNode("localhost",10113,"c")
-      val group = new Group("test")
+      var one = new UserNode("localhost",10111,"a")
+      var two = new UserNode("localhost",10112,"b")
+      var three = new UserNode("localhost",10113,"c")
+      //var four = new UserNode("localhost",10114,"d")
+      var group = new Group("test")
       group.addMembers("a", one)
       group.addMembers("b", two)
       group.addMembers("c", three)
+      //group.addMembers("d", four)
       
       one.addToGroup(group)
       two.addToGroup(group)
       three.addToGroup(group)
+      //four.addToGroup(group)
+      
+      mcs.addGroup(group)
       
       //Create Current Node
       
       curnode = three
+      curGroup = group
       
       
       try {  
@@ -57,7 +66,7 @@ object Shutterbug {
       
       
       //Start the listening thread
-      val pthread: ProcessingThread = new ProcessingThread(curnode)
+      var pthread: ProcessingThread = new ProcessingThread(curnode)
       
       // Start the refresh thread
       //val refThread: RefreshThread = new RefreshThread
@@ -66,14 +75,18 @@ object Shutterbug {
       println("Started for node "+curnode.getName+"...")
       pthread.run
       
+      var im = new ImageIcon()
+      DisplayImage.setPicList(List(im))
+      DisplayImage.main(args)
+      
       // Run the background refresh thread here 
-      spawn {
-    	  while (true) { 
-    		  Shutterbug.curnode.displayRefreshBuf
-    		  Thread.sleep(20000);
-    		  // clear the cache's old entries
-    	  }
-      }
+//      spawn {
+//    	  while (true) { 
+//    		  mcs.displayRefreshBuf(group.getName)
+//    		  Thread.sleep(20000);
+//    		  // clear the cache's old entries
+//    	  }
+//      }
       
       //While loop
       while(true)
@@ -81,28 +94,37 @@ object Shutterbug {
         println("Enter 1 to send a message:")
         println("Enter 2 to exit:")
         
-        val scan:Scanner = new Scanner(System.in)
-        val selection: Int = scan.nextInt();
+        var scan:Scanner = new Scanner(System.in)
+        var selection: Int = scan.nextInt();
         
         selection match {
       
           
-          case 1 => println("Enter the message:")
+          case 1 => println("Enter the Image Path:")
         		  	scan.nextLine()
-        		  	val in_msg : String = scan.nextLine()
-        		  	val hash_val = calculate_hash.md5(in_msg).toString()
+        		  	var in_msg : String = scan.nextLine()
+        		  	
+        		  	var img = new ImageIcon(in_msg)
+        		  	var format = picture.getPicFormat(in_msg)
+        		  	var hash_val = calculate_hash.md5_img(format, picture.convertToBI(img))
         		  	
         		  	println("Hash value for message "+hash_val)
         		  	
-        		  	val selectionNode:UserNode = group.getNodeFromHash(hash_val)
+        		  	var selectionNode:UserNode = group.getNodeFromHash(hash_val)
         		  	// Detect the group which this node is in while sending the message here
         		  	
         		  	println("Selected node is "+selectionNode.getName())
         		  	
-        		  	val img_upload:UserMessage = new UserMessage(IMG_UPLOAD, in_msg, curnode )
+        		  	var img_upload:UserMessage = new UserMessage(IMG_UPLOAD, img, curnode, group, selectionNode, format)
+        		  	          
+        		  	var selectionNode2:UserNode = group.getSuccessor(selectionNode)
+        		  	println("Selected node is "+selectionNode2.getName())
         		  	
-        		  	// Send the Blocking message to the storer
-        		  	MessagePasser.send_blocking(selectionNode, img_upload, group)       		  	
+        		  	var img_upload2:UserMessage = new UserMessage(IMG_UPLOAD, img, curnode, group, selectionNode2, format)
+        		  	
+        		  	// Send the Blocking message to the storers
+        		  	MessagePasser.send_blocking(selectionNode, img_upload, group)
+        		  	MessagePasser.send_blocking(selectionNode2, img_upload2, group)
         		  	
           case 2 => println("Bye")
           			System.exit(0)

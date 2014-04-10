@@ -14,51 +14,69 @@ import msgKind._
 import scala.actors.remote.Node
 
 class ProcessingThread(inNode: UserNode) extends Runnable {
-  def run(){
-    actor {
-		alive(inNode.getPort)
-		register(Symbol(inNode.getName), self)
-		
-		loop {
-		  receive {	    
-		    
-		  		  case message : UserMessage =>{
-		  		  val msgSender : UserNode = message.getSender
-		  		  val remoteSender = select(Node(msgSender.getIP, msgSender.getPort), Symbol(msgSender.getName))
-		  		  message.getKind match 
-		  		  {
-		  		    case IMG_UPLOAD =>
-		  		      println("Message Kind received by "+inNode.getName+" is IMG_UPLOAD from "+ msgSender.getName)
-		  		      val reply_message:UserMessage = new UserMessage(UPLOAD_ACK, "Image Received", Shutterbug.curnode)
-		  		      Shutterbug.curnode.addToRefreshBuffer(message.getData.toString())
-		  		      reply(reply_message)
-		  		      
-		  		    case THUMB_PUT =>
-		  		      println("Message Kind received by "+inNode.getName+" is THUMB_PUT from "+msgSender.getName)
-		  		      val reply_msg:UserMessage = new UserMessage(THUMB_ACK, "Thumbnail Received", Shutterbug.curnode)
-		  		      Shutterbug.curnode.addToRefreshBuffer(message.getData.toString())
-		  		      remoteSender ! reply_msg
-		  		      
-		  		    case THUMB_ACK =>
-		  		      println("Received THUMB_ACK at "+inNode.getName+" sent by "+msgSender.getName)
-		  		      
-		  		    case UPLOAD_ACK =>
-		  		      println("Message Kind received by "+inNode.getName+" is UPLOAD_ACK from "+msgSender.getName)
-		  		      
-		  		    case IMG_DELETE =>
-		  		      println("Message Kind received by "+inNode.getName+" is IMG_DELETE from "+msgSender.getName)
-		  		    
-		  		  }
-		  		  
-		  		}
-		  		case msg =>
-		  		{
-		  			println("Message found "+msg)
-		  		}
-				
+	def run(){
+		actor {
+			alive(inNode.getPort)
+			register(Symbol(inNode.getName), self)
+
+			loop {
+				receive {	    
+
+				case message : UserMessage =>{
+					var msgSender : UserNode = message.getSender
+							var remoteSender = select(Node(msgSender.getIP, msgSender.getPort), Symbol(msgSender.getName))
+							message.getKind match 
+							{
+							case IMG_UPLOAD =>
+
+							println("Message Kind received by "+inNode.getName+" is IMG_UPLOAD from "+ msgSender.getName)
+
+							val image:Image = message.getData.asInstanceOf[ImageIcon].getImage().getScaledInstance(100, 100, Image.SCALE_DEFAULT)
+							var thumbIcon = new ImageIcon(image)
+							var thumbBufImg = picture.convertToBI(thumbIcon)
+							var thumbHash = calculate_hash.md5_img(message.getFormat, thumbBufImg)
+							var bufImg = picture.convertToBI(message.getData.asInstanceOf[ImageIcon])
+
+							ImageIO.write(bufImg, message.getFormat, new File("images/" +thumbHash+"."+message.getFormat));
+
+							println("Thumbnail created")
+
+							val reply_message:UserMessage = new UserMessage(UPLOAD_ACK, thumbIcon, Shutterbug.curnode, message.getGroup, message.getStorer, message.getFormat)
+							
+							//var reply_message:UserMessage = new UserMessage(UPLOAD_ACK, "Image Received", Shutterbug.curnode, message.getGroup, message.getStorer)
+							// Convert to thumbnail and add to refresh buffer here
+							
+							Shutterbug.mcs.addToRefreshBuffer(message.getGroup.getName, thumbIcon, message.getStorer, message.getFormat)
+							reply(reply_message)
+
+							case THUMB_PUT =>
+								println("Message Kind received by "+inNode.getName+" is THUMB_PUT from "+msgSender.getName)
+								var reply_msg:UserMessage = new UserMessage(THUMB_ACK, message.getData.asInstanceOf[ImageIcon], Shutterbug.curnode, message.getGroup, message.getStorer, message.getFormat)
+								Shutterbug.mcs.addToRefreshBuffer(message.getGroup.getName, message.getData.asInstanceOf[ImageIcon], message.getStorer, message.getFormat)
+							
+								remoteSender ! reply_msg
+
+							case THUMB_ACK =>
+							println("Received THUMB_ACK at "+inNode.getName+" sent by "+msgSender.getName)
+
+							case UPLOAD_ACK =>
+							println("Message Kind received by "+inNode.getName+" is UPLOAD_ACK from "+msgSender.getName)
+
+							case DEL_IMG =>
+							println("Message Kind received by "+inNode.getName+" is IMG_DELETE from "+msgSender.getName)
+							Shutterbug.mcs.processDelete(message.getData.asInstanceOf[ImageIcon])
+
+							}
+
+				}
+				case msg =>
+				{
+					println("Message found "+msg)
+				}
+
+				}
 			}
 		}
 	}
-  }
-  
+
 }
