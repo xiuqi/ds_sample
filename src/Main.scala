@@ -1,4 +1,3 @@
-
 import java.util.Scanner
 import java.security.MessageDigest
 import msgKind._
@@ -14,15 +13,18 @@ import javax.swing.ImageIcon
 
 object Shutterbug {
     RemoteActor.classLoader = getClass().getClassLoader()
+    var app_port:Int = 10114
+    var check_inside:Int =0
+    var boot_ip:String = "localhost"
     var curnode:UserNode = null
     var curGroup:Group = null
     var logger:Logger = Logger.getLogger("MyLog");  
     var fh: FileHandler = null;
     var mcs:MulticastService = new MulticastService
     def main(args: Array[String]) {
-      var one = new UserNode("localhost",10111,"a")
-      var two = new UserNode("localhost",10112,"b")
-      var three = new UserNode("localhost",10113,"c")
+      var one = new UserNode("128.237.223.235",10111,"a")
+      var two = new UserNode("128.237.218.148",10112,"b")
+      var three = new UserNode("128.237.126.28",10113,"c")
       //var four = new UserNode("localhost",10114,"d")
       var group = new Group("test")
       group.addMembers("a", one)
@@ -39,7 +41,7 @@ object Shutterbug {
       
       //Create Current Node
       
-      curnode = three
+      curnode = one
       curGroup = group
       
       
@@ -74,10 +76,10 @@ object Shutterbug {
       
       println("Started for node "+curnode.getName+"...")
       pthread.run
-      
+      //View group
       var im = new ImageIcon()
-      DisplayImage.setPicList(List(im))
-      DisplayImage.main(args)
+//      DisplayImage.setPicList(List(im))
+//      DisplayImage.main(args)
       
       // Run the background refresh thread here 
 //      spawn {

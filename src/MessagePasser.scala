@@ -59,23 +59,36 @@ object MessagePasser {
 								println("Destination "+dstNode.getName+ " dead")
 								multicast_dead(dstNode.getName, grp)
 								var selectionNode:UserNode = grp.getNodeFromHash(hashVal)
-								var selNode:UserNode = grp.getSuccessor(selectionNode)
-								if (selNode.getName.equals(Shutterbug.curnode.getName))
-								{				
-				
-									ImageIO.write(bufImg, message.getFormat, new File("images/" +hashVal+"."+message.getFormat));
-
-									val image:Image = message.getData.asInstanceOf[ImageIcon].getImage().getScaledInstance(100, 100, Image.SCALE_DEFAULT)
-									println("Thumbnail created")
-									val mesg:UserMessage = new UserMessage(THUMB_PUT, new ImageIcon(image), Shutterbug.curnode,grp, dstNode, message.getFormat)
-
-									multicast_msg(dstNode, mesg, grp)
-									//Shutterbug.curnode.addToRefreshBuffer(new ImageIcon(image))
-
-									Shutterbug.mcs.addToRefreshBuffer(grp.getName, mesg.getData.asInstanceOf[ImageIcon], dstNode, message.getFormat)
-								  
-								}
-								remoteActor = select(Node(selNode.getIP, selNode.getPort), Symbol(selNode.getName))
+								var selectionNode2:UserNode = grp.getSuccessor(selectionNode)
+								println("New node selected: "+selectionNode.getName+" and "+selectionNode2.getName)
+//								if (selNode.getName.equals(Shutterbug.curnode.getName))
+//								{				
+//				
+//									ImageIO.write(bufImg, message.getFormat, new File("images/" +hashVal+"."+message.getFormat));
+//
+//									val image:Image = message.getData.asInstanceOf[ImageIcon].getImage().getScaledInstance(100, 100, Image.SCALE_DEFAULT)
+//									println("Thumbnail created")
+//									val mesg:UserMessage = new UserMessage(THUMB_PUT, new ImageIcon(image), Shutterbug.curnode,grp, dstNode, message.getFormat)
+//
+//									multicast_msg(dstNode, mesg, grp)
+//									//Shutterbug.curnode.addToRefreshBuffer(new ImageIcon(image))
+//
+//									Shutterbug.mcs.addToRefreshBuffer(grp.getName, mesg.getData.asInstanceOf[ImageIcon], dstNode, message.getFormat)
+//								  
+//								}
+								//remoteActor = select(Node(selectionNode.getIP, selNode.getPort), Symbol(selNode.getName))
+								//remoteActor = select(Node(selNode.getIP, selNode.getPort), Symbol(selNode.getName))
+								//To be finished
+								var img_upload:UserMessage = new UserMessage(IMG_UPLOAD, message.getData.asInstanceOf[ImageIcon], Shutterbug.curnode, 
+								    grp, selectionNode, message.getFormat)
+								println("Selected node is "+selectionNode2.getName())
+        		  	
+								var img_upload2:UserMessage = new UserMessage(IMG_UPLOAD, message.getData.asInstanceOf[ImageIcon], Shutterbug.curnode, 
+								    grp, selectionNode2, message.getFormat)
+        		  	
+								// Send the Blocking message to the storers
+								MessagePasser.send_blocking(selectionNode, img_upload, grp)
+								MessagePasser.send_blocking(selectionNode2, img_upload2, grp)
 							}
 
 							case mesg: UserMessage =>

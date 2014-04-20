@@ -1,7 +1,9 @@
 
 object msgKind extends Enumeration{
     type msgKind = Value
-    val IMG_UPLOAD, UPLOAD_ACK, NORMAL_ACK, THUMB_PUT, THUMB_ACK, NODE_DEAD, DEL_IMG = Value
+    val IMG_UPLOAD, UPLOAD_ACK, NORMAL_ACK, 
+    THUMB_PUT, THUMB_ACK, NODE_DEAD, DEL_IMG, INVITATION, 
+    INV_YES_ACK, INV_NO_ACK, INV_DATA, NEW_MEMBER = Value
   }
 import msgKind._
 

@@ -1,0 +1,196 @@
+Apr 10, 2014 8:55:35 PM Shutterbug$ main
+INFO: My first log
+Apr 10, 2014 8:55:52 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@3fd372cf
+Apr 10, 2014 8:55:52 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@3fd372cf
+Apr 10, 2014 8:55:59 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@3fd372cf
+Apr 10, 2014 8:55:59 PM MulticastService displayRefreshBuf
+INFO: Msg 1 :javax.swing.ImageIcon@7879a53d
+Apr 10, 2014 8:55:59 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@3fd372cf
+Apr 10, 2014 8:55:59 PM MulticastService displayRefreshBuf
+INFO: Msg 1 :javax.swing.ImageIcon@7879a53d
+Apr 10, 2014 8:56:08 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@3fd372cf
+Apr 10, 2014 8:56:08 PM MulticastService displayRefreshBuf
+INFO: Msg 1 :javax.swing.ImageIcon@7879a53d
+Apr 10, 2014 8:56:08 PM MulticastService displayRefreshBuf
+INFO: Msg 2 :javax.swing.ImageIcon@1740f67a
+Apr 10, 2014 8:56:08 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@3fd372cf
+Apr 10, 2014 8:56:08 PM MulticastService displayRefreshBuf
+INFO: Msg 1 :javax.swing.ImageIcon@7879a53d
+Apr 10, 2014 8:56:08 PM MulticastService displayRefreshBuf
+INFO: Msg 2 :javax.swing.ImageIcon@1740f67a
+Apr 10, 2014 8:56:14 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@7879a53d
+Apr 10, 2014 8:56:14 PM MulticastService displayRefreshBuf
+INFO: Msg 1 :javax.swing.ImageIcon@1740f67a
+Apr 10, 2014 8:56:19 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@1740f67a
+Apr 10, 2014 8:56:29 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@720ade7a
+Apr 10, 2014 8:56:29 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@720ade7a
+Apr 10, 2014 8:56:39 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@720ade7a
+Apr 10, 2014 8:56:39 PM MulticastService displayRefreshBuf
+INFO: Msg 1 :javax.swing.ImageIcon@15fec1d
+Apr 10, 2014 8:56:39 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@720ade7a
+Apr 10, 2014 8:56:39 PM MulticastService displayRefreshBuf
+INFO: Msg 1 :javax.swing.ImageIcon@15fec1d
+Apr 10, 2014 8:56:48 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@720ade7a
+Apr 10, 2014 8:56:48 PM MulticastService displayRefreshBuf
+INFO: Msg 1 :javax.swing.ImageIcon@15fec1d
+Apr 10, 2014 8:56:48 PM MulticastService displayRefreshBuf
+INFO: Msg 2 :javax.swing.ImageIcon@7e6f6bda
+Apr 10, 2014 8:56:48 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@720ade7a
+Apr 10, 2014 8:56:48 PM MulticastService displayRefreshBuf
+INFO: Msg 1 :javax.swing.ImageIcon@15fec1d
+Apr 10, 2014 8:56:48 PM MulticastService displayRefreshBuf
+INFO: Msg 2 :javax.swing.ImageIcon@7e6f6bda
+Apr 10, 2014 8:56:53 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@15fec1d
+Apr 10, 2014 8:56:53 PM MulticastService displayRefreshBuf
+INFO: Msg 1 :javax.swing.ImageIcon@7e6f6bda
+Apr 10, 2014 8:56:56 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@7e6f6bda
+Apr 10, 2014 8:57:08 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@4e7cdc6a
+Apr 10, 2014 8:57:08 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@4e7cdc6a
+Apr 10, 2014 8:57:18 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@4e7cdc6a
+Apr 10, 2014 8:57:18 PM MulticastService displayRefreshBuf
+INFO: Msg 1 :javax.swing.ImageIcon@635d6591
+Apr 10, 2014 8:57:18 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@4e7cdc6a
+Apr 10, 2014 8:57:18 PM MulticastService displayRefreshBuf
+INFO: Msg 1 :javax.swing.ImageIcon@635d6591
+Apr 10, 2014 8:57:30 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@4e7cdc6a
+Apr 10, 2014 8:57:30 PM MulticastService displayRefreshBuf
+INFO: Msg 1 :javax.swing.ImageIcon@635d6591
+Apr 10, 2014 8:57:30 PM MulticastService displayRefreshBuf
+INFO: Msg 2 :javax.swing.ImageIcon@19c36cea
+Apr 10, 2014 8:57:30 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@4e7cdc6a
+Apr 10, 2014 8:57:30 PM MulticastService displayRefreshBuf
+INFO: Msg 1 :javax.swing.ImageIcon@635d6591
+Apr 10, 2014 8:57:30 PM MulticastService displayRefreshBuf
+INFO: Msg 2 :javax.swing.ImageIcon@19c36cea
+Apr 10, 2014 8:57:37 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@4e7cdc6a
+Apr 10, 2014 8:57:37 PM MulticastService displayRefreshBuf
+INFO: Msg 1 :javax.swing.ImageIcon@19c36cea
+Apr 10, 2014 8:57:40 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@19c36cea
+Apr 10, 2014 8:57:54 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@34ff4fb3
+Apr 10, 2014 8:57:54 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@34ff4fb3
+Apr 10, 2014 8:57:59 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@34ff4fb3
+Apr 10, 2014 8:57:59 PM MulticastService displayRefreshBuf
+INFO: Msg 1 :javax.swing.ImageIcon@caa47ba
+Apr 10, 2014 8:57:59 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@34ff4fb3
+Apr 10, 2014 8:57:59 PM MulticastService displayRefreshBuf
+INFO: Msg 1 :javax.swing.ImageIcon@caa47ba
+Apr 10, 2014 8:58:08 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@34ff4fb3
+Apr 10, 2014 8:58:08 PM MulticastService displayRefreshBuf
+INFO: Msg 1 :javax.swing.ImageIcon@caa47ba
+Apr 10, 2014 8:58:08 PM MulticastService displayRefreshBuf
+INFO: Msg 2 :javax.swing.ImageIcon@214d554b
+Apr 10, 2014 8:58:08 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@34ff4fb3
+Apr 10, 2014 8:58:08 PM MulticastService displayRefreshBuf
+INFO: Msg 1 :javax.swing.ImageIcon@caa47ba
+Apr 10, 2014 8:58:08 PM MulticastService displayRefreshBuf
+INFO: Msg 2 :javax.swing.ImageIcon@214d554b
+Apr 10, 2014 8:58:13 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@34ff4fb3
+Apr 10, 2014 8:58:13 PM MulticastService displayRefreshBuf
+INFO: Msg 1 :javax.swing.ImageIcon@caa47ba
+Apr 10, 2014 8:58:16 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@34ff4fb3
+Apr 10, 2014 8:58:29 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@3f3a1398
+Apr 10, 2014 8:58:29 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@3f3a1398
+Apr 10, 2014 8:58:38 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@3f3a1398
+Apr 10, 2014 8:58:38 PM MulticastService displayRefreshBuf
+INFO: Msg 1 :javax.swing.ImageIcon@48bdd8f7
+Apr 10, 2014 8:58:38 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@3f3a1398
+Apr 10, 2014 8:58:38 PM MulticastService displayRefreshBuf
+INFO: Msg 1 :javax.swing.ImageIcon@48bdd8f7
+Apr 10, 2014 8:58:48 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@3f3a1398
+Apr 10, 2014 8:58:48 PM MulticastService displayRefreshBuf
+INFO: Msg 1 :javax.swing.ImageIcon@48bdd8f7
+Apr 10, 2014 8:58:48 PM MulticastService displayRefreshBuf
+INFO: Msg 2 :javax.swing.ImageIcon@3e481e39
+Apr 10, 2014 8:58:48 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@3f3a1398
+Apr 10, 2014 8:58:48 PM MulticastService displayRefreshBuf
+INFO: Msg 1 :javax.swing.ImageIcon@48bdd8f7
+Apr 10, 2014 8:58:48 PM MulticastService displayRefreshBuf
+INFO: Msg 2 :javax.swing.ImageIcon@3e481e39
+Apr 10, 2014 8:58:53 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@3f3a1398
+Apr 10, 2014 8:58:53 PM MulticastService displayRefreshBuf
+INFO: Msg 1 :javax.swing.ImageIcon@3e481e39
+Apr 10, 2014 8:58:56 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@3f3a1398
+Apr 10, 2014 8:59:42 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@cbf5e35
+Apr 10, 2014 8:59:42 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@cbf5e35
+Apr 10, 2014 8:59:51 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@cbf5e35
+Apr 10, 2014 8:59:51 PM MulticastService displayRefreshBuf
+INFO: Msg 1 :javax.swing.ImageIcon@d6c902b
+Apr 10, 2014 8:59:51 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@cbf5e35
+Apr 10, 2014 8:59:51 PM MulticastService displayRefreshBuf
+INFO: Msg 1 :javax.swing.ImageIcon@d6c902b
+Apr 10, 2014 9:00:32 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@cbf5e35
+Apr 10, 2014 9:00:32 PM MulticastService displayRefreshBuf
+INFO: Msg 1 :javax.swing.ImageIcon@d6c902b
+Apr 10, 2014 9:00:32 PM MulticastService displayRefreshBuf
+INFO: Msg 2 :javax.swing.ImageIcon@8bf290b
+Apr 10, 2014 9:00:32 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@cbf5e35
+Apr 10, 2014 9:00:32 PM MulticastService displayRefreshBuf
+INFO: Msg 1 :javax.swing.ImageIcon@d6c902b
+Apr 10, 2014 9:00:32 PM MulticastService displayRefreshBuf
+INFO: Msg 2 :javax.swing.ImageIcon@8bf290b
+Apr 10, 2014 9:00:36 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@d6c902b
+Apr 10, 2014 9:00:36 PM MulticastService displayRefreshBuf
+INFO: Msg 1 :javax.swing.ImageIcon@8bf290b
+Apr 10, 2014 9:00:39 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@d6c902b
+Apr 10, 2014 9:01:06 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@19d6ba35
+Apr 10, 2014 9:01:06 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@19d6ba35
+Apr 10, 2014 9:01:06 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@19d6ba35
+Apr 10, 2014 9:01:06 PM MulticastService displayRefreshBuf
+INFO: Msg 1 :javax.swing.ImageIcon@17310c9f
+Apr 10, 2014 9:01:06 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@19d6ba35
+Apr 10, 2014 9:01:06 PM MulticastService displayRefreshBuf
+INFO: Msg 1 :javax.swing.ImageIcon@17310c9f
+Apr 10, 2014 9:01:34 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@17310c9f

@@ -5,11 +5,10 @@ import java.util.ArrayList
 import scala.util.control.Breaks._
 import java.util.concurrent.locks.ReentrantLock
 
-
 class Group(name:String) extends Serializable{
-  var id:String = "";
+  var id:String = ""
+  var creator:String = ""
   var members:TreeMap[String,UserNode] = new TreeMap[String, UserNode]
-  var lookup:HashMap[String,UserNode] = new HashMap[String, UserNode]
   var memLock:ReentrantLock = new ReentrantLock 
   
   def upload(path:String){}
@@ -48,6 +47,16 @@ class Group(name:String) extends Serializable{
     memlist.addAll(members.values())
     memLock.unlock()
     return memlist
+  }
+  
+  def returnMembersMap(inv_data:InvitationData)
+  {
+    memLock.lock()
+   
+    inv_data.set_members(members)
+    
+    memLock.unlock()
+  
   }
   
   def addMembers(uname: String, insUserNode:UserNode)
@@ -95,6 +104,37 @@ class Group(name:String) extends Serializable{
     	}
     	
     	return members.get(arrtemp.get(i))       
+     
+   }
+   
+   def setCreator(name:String){
+     creator = name
+   }
+   
+    def getCreator(): String ={
+     return creator
+   }
+   
+   def getNodeFromName(name:String): UserNode = {
+     memLock.lock()
+     var hash_val:String = calculate_hash.md5(name).toString()
+     var node:UserNode = members.get(hash_val)
+     memLock.unlock()
+     return node
+   }
+   
+   def checkMemberExists(name:String) : Boolean ={
+      memLock.lock()
+     var hash_val:String = calculate_hash.md5(name).toString()
+     
+     if(members.containsKey(hash_val)){
+       memLock.unlock()
+       return true
+       
+     }
+     
+     memLock.unlock()
+     return false
      
    }
   

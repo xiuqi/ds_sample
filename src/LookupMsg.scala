@@ -4,7 +4,7 @@ import java.util.HashMap
 import java.util.ArrayList
 import javax.swing.ImageIcon
 
-class LookupMsg() {
+class LookupMsg() extends Serializable {
   // HashMap for acks
   var holder:ArrayList[String] = new ArrayList[String] 
   var format:String = null;
