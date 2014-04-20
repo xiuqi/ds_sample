@@ -1,16 +1,4 @@
-Apr 19, 2014 6:55:32 PM UIinteraction$ onLogin
+Apr 19, 2014 11:21:24 PM UIinteraction$ onLogin
 INFO: My first log
-Apr 19, 2014 6:57:10 PM MulticastService displayRefreshBuf
-INFO: Msg 0 :javax.swing.ImageIcon@718d6483
-Apr 19, 2014 6:57:11 PM MulticastService displayRefreshBuf
-INFO: Msg 0 :javax.swing.ImageIcon@718d6483
-Apr 19, 2014 6:57:20 PM MulticastService displayRefreshBuf
-INFO: Msg 0 :javax.swing.ImageIcon@718d6483
-Apr 19, 2014 6:57:20 PM MulticastService displayRefreshBuf
-INFO: Msg 1 :javax.swing.ImageIcon@1739e7
-Apr 19, 2014 6:57:20 PM MulticastService displayRefreshBuf
-INFO: Msg 0 :javax.swing.ImageIcon@718d6483
-Apr 19, 2014 6:57:20 PM MulticastService displayRefreshBuf
-INFO: Msg 1 :javax.swing.ImageIcon@1739e7
-Apr 19, 2014 6:57:36 PM MulticastService displayRefreshBuf
-INFO: Msg 0 :javax.swing.ImageIcon@1739e7
+Apr 19, 2014 11:23:03 PM MulticastService displayRefreshBuf
+INFO: Msg 0 :javax.swing.ImageIcon@79d185eb

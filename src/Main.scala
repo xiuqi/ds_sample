@@ -13,7 +13,7 @@ import javax.swing.ImageIcon
 
 object Shutterbug {
     RemoteActor.classLoader = getClass().getClassLoader()
-    var app_port:Int = 10114
+    var app_port:Int = 10219
     var check_inside:Int =0
     var boot_ip:String = "localhost"
     var curnode:UserNode = null

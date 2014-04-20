@@ -9,6 +9,7 @@ import java.awt.image.RenderedImage
 import java.awt.image.BufferedImage
 import msgKind._
 import java.util.ArrayList
+import scala.actors.TIMEOUT
 
 object MessagePasser {
 
@@ -16,7 +17,7 @@ object MessagePasser {
 		actor {
 			var bufImg = picture.convertToBI(message.getData.asInstanceOf[ImageIcon])
 			var hashVal = calculate_hash.md5_img(message.getFormat, bufImg)
-			
+			println("Send blocking called")
 			if (dstNode.getName.equals(Shutterbug.curnode.getName))
 			{				
 				val image:Image = message.getData.asInstanceOf[ImageIcon].getImage().getScaledInstance(100, 100, Image.SCALE_DEFAULT)
@@ -39,17 +40,21 @@ object MessagePasser {
 			else
 			{
 				var remoteActor = select(Node(dstNode.getIP, dstNode.getPort), Symbol(dstNode.getName))
-				var waitTime:Long = 5000
+				var waitTime:Long = 2000
 				var retryCount: Int = 0
 				var sending: Boolean = false
 
-				println("Send blocking called")
+				
 
-				while (sending == false)
+				loopWhile (sending == false)
 				{
-					remoteActor !? message
-							match {
-							case None => 
+					println("Sending to "+ message.getStorer.getName)
+					val ret = remoteActor ! message
+							reactWithin(waitTime) {
+
+							
+							case TIMEOUT => 
+							println("case timeout")
 							retryCount = retryCount + 1
 
 							// Retry 3 times, otherwise pronounce dead
@@ -81,16 +86,16 @@ object MessagePasser {
 								//To be finished
 								var img_upload:UserMessage = new UserMessage(IMG_UPLOAD, message.getData.asInstanceOf[ImageIcon], Shutterbug.curnode, 
 								    grp, selectionNode, message.getFormat)
-								println("Selected node is "+selectionNode2.getName())
+	
         		  	
 								var img_upload2:UserMessage = new UserMessage(IMG_UPLOAD, message.getData.asInstanceOf[ImageIcon], Shutterbug.curnode, 
 								    grp, selectionNode2, message.getFormat)
         		  	
 								// Send the Blocking message to the storers
-								MessagePasser.send_blocking(selectionNode, img_upload, grp)
-								MessagePasser.send_blocking(selectionNode2, img_upload2, grp)
+								//MessagePasser.send_blocking(selectionNode, img_upload, grp)
+								sending = true
 							}
-
+							
 							case mesg: UserMessage =>
 							mesg.getKind match {
 							case UPLOAD_ACK =>
@@ -101,6 +106,9 @@ object MessagePasser {
 							sending = true
 
 							}//case
+							
+							
+							
 					}//match
 				}//while
 				println("Returning backk")
@@ -115,9 +123,10 @@ object MessagePasser {
 				var grpCount:Int = members.size()
 
 				var iter:Int = 0
-
+				println("Group count: "+grpCount )
 				while (iter < grpCount)
 				{
+					println("While statement")
 					if (members.get(iter).getName.equals(dstNode.getName) || members.get(iter).getName.equals(Shutterbug.curnode.getName))
 					{
 						println("Not sending to node " + members.get(iter).getName)
@@ -131,9 +140,11 @@ object MessagePasser {
 
 						// Send here 
 						remoteActor ! send_msg
+						println("Came here")
 					}
 					iter = iter + 1
 				}
+				
 	}
 
 	def multicast_dead(dstName : String, grp: Group) {

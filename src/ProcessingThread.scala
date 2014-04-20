@@ -100,7 +100,8 @@ class ProcessingThread(inNode: UserNode) extends Runnable {
 							  var req_grp:Group = Shutterbug.curnode.returnGroupFromName(message.getGroup.getName, 
 							      message.getGroup.getCreator)
 							  req_grp.addMembers(message.getData.asInstanceOf[UserNode].getName, message.getData.asInstanceOf[UserNode])
-
+							case NODE_DEAD =>
+							  println("Received dead node message")
 					}
 
 				}

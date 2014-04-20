@@ -157,7 +157,9 @@ class MulticastService {
 				lkmsg.setFormat(format)
 				refreshBuffer.get(groupName).put(hash_val, lkmsg)
 				displayBuffer.get(groupName).add(messg)
+				
 				}
+//				redistBuffer.get(groupName).get(dstNode.getName).add(hash_val)
 				refreshLock.unlock()
 				println("addref unlock")
 				
