@@ -13,6 +13,7 @@ import javax.swing.ImageIcon
 
 object Shutterbug {
     RemoteActor.classLoader = getClass().getClassLoader()
+    var grp_file_name:String = "groupInfo.txt"
     var app_port:Int = 10219
     var check_inside:Int =0
     var boot_ip:String = "localhost"
