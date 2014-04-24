@@ -7,6 +7,7 @@ class InvitationData extends Serializable{
 	var inv_refresh:HashMap[String, LookupMsg] = null
 	var inv_display:ArrayList[ImageIcon] = null
 	var inv_members:TreeMap[String,UserNode] = null
+	var inv_redist:HashMap[String,ArrayList[String]] = null
 	
 	def set_refresh(in_refresh:HashMap[String, LookupMsg]) {
 	  inv_refresh = in_refresh
@@ -20,6 +21,9 @@ class InvitationData extends Serializable{
 	  inv_members = in_members
 	}
 	
+	def set_redist(in_redist:HashMap[String,ArrayList[String]]){
+	  inv_redist = in_redist
+	}
 	def get_refresh(): HashMap[String, LookupMsg] = {
 	  return inv_refresh
 	}
@@ -30,5 +34,8 @@ class InvitationData extends Serializable{
 	
 	def get_members():TreeMap[String,UserNode] = {
 	  return inv_members
-	}	
+	}
+	def get_redist():HashMap[String,ArrayList[String]] = {
+	  return inv_redist
+	}
 }

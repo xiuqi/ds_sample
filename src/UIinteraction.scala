@@ -9,6 +9,7 @@ import scala.actors.remote.RemoteActor
 import scala.actors.remote.RemoteActor._
 import scala.swing.Dialog
 import javax.swing.ImageIcon
+import java.io.File
 
 
 object UIinteraction {
@@ -27,8 +28,8 @@ object UIinteraction {
 
         // the following statement is used to log any messages  
         Shutterbug.logger.info("My first log");  
-
-      }
+        
+	  }
       
       catch  {  
       case e:SecurityException => e.printStackTrace();  
@@ -92,6 +93,7 @@ object UIinteraction {
 					        
 					        var inv_data:InvitationData = new InvitationData
 					        // Get refresh and display buf
+					        Shutterbug.mcs.addInvitedUser(mesg.getSender.getName, mesg.getGroup.getName)
 					        Shutterbug.mcs.getBuffers(inv_group.getName, inv_data)
 					        // Get members
 					        inv_group.returnMembersMap(inv_data)
@@ -150,4 +152,6 @@ object UIinteraction {
         		  	MessagePasser.send_blocking(selectionNode, img_upload, group)
         		  	MessagePasser.send_blocking(selectionNode2, img_upload2, group)
 	}
+	
+
 }

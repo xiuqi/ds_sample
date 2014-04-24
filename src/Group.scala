@@ -67,6 +67,8 @@ class Group(name:String) extends Serializable{
     println("In addMembers hash for node "+insUserNode.getName+" is "+hash_val)
     members.put(hash_val, insUserNode)
     memLock.unlock()
+    
+    File.updateFile
   }
   
   
@@ -137,5 +139,12 @@ class Group(name:String) extends Serializable{
      return false
      
    }
+   
+   def getLock(){
+	  memLock.lock()
+	}
+	def releaseLock(){
+	  memLock.unlock()
+	}
   
 }

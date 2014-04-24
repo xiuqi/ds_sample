@@ -16,43 +16,44 @@ object MessagePasser {
 	def send_blocking(dstNode: UserNode, message:UserMessage, grp: Group) {
 		actor {
 			var bufImg = picture.convertToBI(message.getData.asInstanceOf[ImageIcon])
-			var hashVal = calculate_hash.md5_img(message.getFormat, bufImg)
-			println("Send blocking called")
-			if (dstNode.getName.equals(Shutterbug.curnode.getName))
-			{				
-				val image:Image = message.getData.asInstanceOf[ImageIcon].getImage().getScaledInstance(100, 100, Image.SCALE_DEFAULT)
-				var thumbIcon = new ImageIcon(image)
-				var thumbBufImg = picture.convertToBI(thumbIcon)
-				var thumbHash = calculate_hash.md5_img(message.getFormat, thumbBufImg)
+					var hashVal = calculate_hash.md5_img(message.getFormat, bufImg)
+					println("Send blocking called")
+					if (dstNode.getName.equals(Shutterbug.curnode.getName))
+					{				
+						val image:Image = message.getData.asInstanceOf[ImageIcon].getImage().getScaledInstance(100, 100, Image.SCALE_DEFAULT)
+								var thumbIcon = new ImageIcon(image)
+						var thumbBufImg = picture.convertToBI(thumbIcon)
+			var thumbHash = calculate_hash.md5_img(message.getFormat, thumbBufImg)
 				
-				ImageIO.write(bufImg, message.getFormat, new File("images/" +thumbHash+"."+message.getFormat));
-				
-				println("Thumbnail created")
-				
-				val mesg:UserMessage = new UserMessage(THUMB_PUT, thumbIcon, Shutterbug.curnode,grp, dstNode, message.getFormat)
+			ImageIO.write(bufImg, message.getFormat, new File("images/" +thumbHash+"."+message.getFormat));
 
-				multicast_msg(dstNode, mesg, grp)
-				//Shutterbug.curnode.addToRefreshBuffer(new ImageIcon(image))
+			println("Thumbnail created")
 
-				Shutterbug.mcs.addToRefreshBuffer(grp.getName, thumbIcon, dstNode, message.getFormat)
+			val mesg:UserMessage = new UserMessage(THUMB_PUT, thumbIcon, Shutterbug.curnode,grp, dstNode, message.getFormat)
 
-			}
-			else
-			{
-				var remoteActor = select(Node(dstNode.getIP, dstNode.getPort), Symbol(dstNode.getName))
-				var waitTime:Long = 2000
-				var retryCount: Int = 0
-				var sending: Boolean = false
+			multicast_msg(dstNode, mesg, grp)
+			//Shutterbug.curnode.addToRefreshBuffer(new ImageIcon(image))
 
-				
+			Shutterbug.mcs.addToRefreshBuffer(grp.getName, thumbIcon, dstNode, message.getFormat)
 
-				loopWhile (sending == false)
-				{
-					println("Sending to "+ message.getStorer.getName)
-					val ret = remoteActor ! message
-							reactWithin(waitTime) {
+					}
+					else
+					{
+						var remoteActor = select(Node(dstNode.getIP, dstNode.getPort), Symbol(dstNode.getName))
+								var waitTime:Long = 2000
+								var retryCount: Int = 0
+								var sending: Boolean = false
 
-							
+
+
+						loopWhile (sending == false)
+						{
+						    
+							println("Sending Actual Image to "+ message.getStorer.getName)
+							val ret = remoteActor ! message
+							receiveWithin(waitTime) {
+
+
 							case TIMEOUT => 
 							println("case timeout")
 							retryCount = retryCount + 1
@@ -66,36 +67,19 @@ object MessagePasser {
 								var selectionNode:UserNode = grp.getNodeFromHash(hashVal)
 								var selectionNode2:UserNode = grp.getSuccessor(selectionNode)
 								println("New node selected: "+selectionNode.getName+" and "+selectionNode2.getName)
-//								if (selNode.getName.equals(Shutterbug.curnode.getName))
-//								{				
-//				
-//									ImageIO.write(bufImg, message.getFormat, new File("images/" +hashVal+"."+message.getFormat));
-//
-//									val image:Image = message.getData.asInstanceOf[ImageIcon].getImage().getScaledInstance(100, 100, Image.SCALE_DEFAULT)
-//									println("Thumbnail created")
-//									val mesg:UserMessage = new UserMessage(THUMB_PUT, new ImageIcon(image), Shutterbug.curnode,grp, dstNode, message.getFormat)
-//
-//									multicast_msg(dstNode, mesg, grp)
-//									//Shutterbug.curnode.addToRefreshBuffer(new ImageIcon(image))
-//
-//									Shutterbug.mcs.addToRefreshBuffer(grp.getName, mesg.getData.asInstanceOf[ImageIcon], dstNode, message.getFormat)
-//								  
-//								}
-								//remoteActor = select(Node(selectionNode.getIP, selNode.getPort), Symbol(selNode.getName))
-								//remoteActor = select(Node(selNode.getIP, selNode.getPort), Symbol(selNode.getName))
-								//To be finished
 								var img_upload:UserMessage = new UserMessage(IMG_UPLOAD, message.getData.asInstanceOf[ImageIcon], Shutterbug.curnode, 
-								    grp, selectionNode, message.getFormat)
-	
-        		  	
+										grp, selectionNode, message.getFormat)
+
+
 								var img_upload2:UserMessage = new UserMessage(IMG_UPLOAD, message.getData.asInstanceOf[ImageIcon], Shutterbug.curnode, 
-								    grp, selectionNode2, message.getFormat)
-        		  	
+										grp, selectionNode2, message.getFormat)
+
 								// Send the Blocking message to the storers
-								//MessagePasser.send_blocking(selectionNode, img_upload, grp)
+								MessagePasser.send_blocking(selectionNode, img_upload, grp)
+								MessagePasser.send_blocking(selectionNode2, img_upload2, grp)
 								sending = true
 							}
-							
+
 							case mesg: UserMessage =>
 							mesg.getKind match {
 							case UPLOAD_ACK =>
@@ -103,16 +87,17 @@ object MessagePasser {
 
 							Shutterbug.mcs.addToRefreshBuffer(grp.getName, mesg.getData.asInstanceOf[ImageIcon], dstNode, message.getFormat)
 							multicast_msg(dstNode, mesg, grp)
+							println("Back from multicast_msg############")
 							sending = true
 
 							}//case
-							
-							
-							
-					}//match
-				}//while
-				println("Returning backk")
-			}//if-else
+
+
+
+							}//match
+						}//while
+						println("Returning backk")
+					}//if-else
 		}//actor
 	}//function
 
@@ -133,18 +118,56 @@ object MessagePasser {
 					}
 					else
 					{
-						println("Sending to node " + members.get(iter).getName)
+						println("Sending THUMB_PUT to node " + members.get(iter).getName)
 						var remoteActor = select(Node(members.get(iter).getIP, members.get(iter).getPort), Symbol(members.get(iter).getName))
 						var send_msg : UserMessage = new UserMessage(THUMB_PUT, message.getData.asInstanceOf[ImageIcon], Shutterbug.curnode, message.getGroup, dstNode, 
-						    message.getFormat)
-
-						// Send here 
+								message.getFormat)
+						
 						remoteActor ! send_msg
-						println("Came here")
+
+//						var waitTime:Long = 2000
+//						var retryCount: Int = 0
+//						var sending: Boolean = false
+//
+//
+//
+//						loopWhile (sending == false)
+//						{
+//
+//							// Send here 
+//							remoteActor ! send_msg
+//							receiveWithin(waitTime) {
+//
+//
+//							case TIMEOUT => 
+//							println("case timeout")
+//							retryCount = retryCount + 1
+//
+//							// Retry 3 times, otherwise pronounce dead
+//							if (retryCount > 3)
+//							{
+//								// Destination Node dead, multicast this to everyone else
+//								println("Destination "+members.get(iter).getName+ " dead")
+//								multicast_dead(members.get(iter).getName, grp)
+//								sending = true
+//							}
+//
+//							case re_msg:UserMessage =>
+//							re_msg.getKind match{
+//							case THUMB_ACK =>
+//								println("Got multicast reply")
+//								sending = true
+//							}
+//
+//
+//
+//						}
+	//					}
 					}
 					iter = iter + 1
 				}
-				
+		println("End of multicast message")
+
 	}
 
 	def multicast_dead(dstName : String, grp: Group) {
@@ -173,6 +196,7 @@ object MessagePasser {
 					}
 					iter = iter + 1
 				}
+				Shutterbug.mcs.processDeadNode(grp.getNodeFromName(dstName),grp)
 	}
 
 }

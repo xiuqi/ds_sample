@@ -59,7 +59,8 @@ class ProcessingThread(inNode: UserNode) extends Runnable {
 								    message.getStorer, message.getFormat)
 							
 								remoteSender ! reply_msg
-
+								//reply(reply_msg)
+								    
 							case THUMB_ACK =>
 							println("Received THUMB_ACK at "+inNode.getName+" sent by "+msgSender.getName)
 
@@ -100,8 +101,16 @@ class ProcessingThread(inNode: UserNode) extends Runnable {
 							  var req_grp:Group = Shutterbug.curnode.returnGroupFromName(message.getGroup.getName, 
 							      message.getGroup.getCreator)
 							  req_grp.addMembers(message.getData.asInstanceOf[UserNode].getName, message.getData.asInstanceOf[UserNode])
+							  Shutterbug.mcs.addInvitedUser(message.getData.asInstanceOf[UserNode].getName, message.getGroup.getName)
 							case NODE_DEAD =>
 							  println("Received dead node message")
+							  Shutterbug.mcs.processDeadNode(message.getGroup.getNodeFromName(message.getData.toString()),message.getGroup)
+							case IMG_REQ =>
+							  println("Got a actual image request")
+							  //Open the image file and get the data
+							  var re_msg:UserMessage = new UserMessage(IMG_REP, "", Shutterbug.curnode, message.getGroup,
+							      null, null)
+							  reply(re_msg)
 					}
 
 				}

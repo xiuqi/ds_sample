@@ -14,6 +14,7 @@ class UserNode(ip: String, port: Int, name: String) extends Serializable {
 	  groupList.add(dstGrp)
 	  userLock.unlock()
 	  CreateGroup.setGroupNameList(Shutterbug.curnode.returnGroupName)
+	  File.updateFile
 	}
 	
 	def getName() : String=
@@ -113,5 +114,28 @@ class UserNode(ip: String, port: Int, name: String) extends Serializable {
 	  }
 	  userLock.unlock()
 	  return null;
+	}
+	
+	def getGroupFromName(groupName:String): Group = {
+	 userLock.lock()
+	  var size:Int = groupList.size()
+	  var itr:Int = 0
+	  while(itr<size){
+	    if(groupList.get(itr).getName.equalsIgnoreCase(groupName)){
+	      var ret_grp:Group = groupList.get(itr)
+	      userLock.unlock()	     
+	      return ret_grp
+	    }
+	    itr = itr + 1
+	  }
+	  userLock.unlock()
+	  return null;
+	}
+	
+	def getLock(){
+	  userLock.lock()
+	}
+	def releaseLock(){
+	  userLock.unlock()
 	}
 }

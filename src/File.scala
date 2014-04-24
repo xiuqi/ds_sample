@@ -9,16 +9,20 @@ object File {
    
 	def updateFile(){
 	  filelock.lock()
+	  println("File lock acquired")
 	  var writer:PrintWriter = null
 	  try{
-	  	writer = new PrintWriter(new File("test.txt" ))
+	  	writer = new PrintWriter(new File(Shutterbug.grp_file_name ))
 	  }
 	  catch{
 	    case e:IOException =>
 	      println("Can not create file properly")
 	      filelock.unlock()
+	      println("File lock released")
 	      return
 	  }
+	    Shutterbug.curnode.getLock
+	    println("User lock acquired")
 	 	var i:Int = 0
 	 	var j:Int = 0
 	 	var gList:ArrayList[Group] = Shutterbug.curnode.getGroupList
@@ -27,6 +31,8 @@ object File {
 	 	while(i<gListSize){
 	 	  //Write group name
 	 	  writer.write(gList.get(i).getName+":")
+	 	  gList.get(i).getLock
+	 	  println("Group lock acquired")
 	 	  var memberlist:ArrayList[UserNode] = gList.get(i).returnMembers
 	 	  groupSize = memberlist.size()
 	 	  //Write node information
@@ -37,9 +43,13 @@ object File {
 	 	    j = j+1
 	 	  }
 	 	  writer.write("\n")
+	 	  gList.get(i).releaseLock
+	 	  println("Group lock released")
 	 	  i = i+1
 	 	}
 	 	writer.close()
+	 	Shutterbug.curnode.releaseLock
+	 	println("User lock released")
 	 	filelock.unlock()
 	}
 	
@@ -47,7 +57,7 @@ object File {
 	  filelock.lock()
 	  var res:HashMap[String, ArrayList[String]] = new HashMap[String, ArrayList[String]]
 	  try{
-	  	for(line <- Source.fromFile("test.txt").getLines()){
+	  	for(line <- Source.fromFile(Shutterbug.grp_file_name).getLines()){
 	  		var nameAndMem:Array[String] = line.split(":")
 	  		var memList:Array[String] = nameAndMem(1).split(",")
 	  		var i:Int = 0

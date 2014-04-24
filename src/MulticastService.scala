@@ -7,6 +7,7 @@ import java.util.concurrent.locks.ReentrantLock
 import javax.swing.ImageIcon
 import msgKind._
 import java.io.File
+import java.util.Map
 
 class MulticastService {
 
@@ -27,7 +28,7 @@ class MulticastService {
 	  
 	  inv_data.set_display(displayBuffer.get(grpName))
 	  inv_data.set_refresh(refreshBuffer.get(grpName))
-	  
+	  inv_data.set_redist(redistBuffer.get(grpName))
 	  refreshLock.unlock()
 	  
 	}
@@ -92,13 +93,8 @@ class MulticastService {
 				displayBuffer.put(grp.getName, grpdisplayQueue)
 				
 				var grpredistQueue:HashMap[String,ArrayList[String]] = new HashMap[String,ArrayList[String]]
-				var nodelist:ArrayList[UserNode] = grp.returnMembers
-				var i:Int = 0
-				while(i<nodelist.size){
-				  var tmplist:ArrayList[String] = new ArrayList[String]
-				  grpredistQueue.put(nodelist.get(i).getName, tmplist)
-				  i = i + 1
-				}
+				var tmplist:ArrayList[String] = new ArrayList[String]
+				grpredistQueue.put(Shutterbug.curnode.getName, tmplist)
 				redistBuffer.put(grp.getName, grpredistQueue)
 				refreshLock.unlock()
 				println("addgroup unlock")
@@ -159,7 +155,8 @@ class MulticastService {
 				displayBuffer.get(groupName).add(messg)
 				
 				}
-//				redistBuffer.get(groupName).get(dstNode.getName).add(hash_val)
+				if(!redistBuffer.get(groupName).get(dstNode.getName).contains(hash_val))
+					redistBuffer.get(groupName).get(dstNode.getName).add(hash_val)
 				refreshLock.unlock()
 				println("addref unlock")
 				
@@ -172,55 +169,80 @@ class MulticastService {
 			{
 				// Put the images from the dead thread in the successor
 				refreshLock.lock()
+				
 				println("procDead lock")
-				var grpRefreshBuffer:HashMap[String, LookupMsg]  = refreshBuffer.get(grp.getName)
-				var numMsgs:Int = grpRefreshBuffer.size()
-				var iter:Int = 0
-				var arrtemp:ArrayList[String] = new ArrayList[String];
-				arrtemp.addAll(grpRefreshBuffer.keySet())
-
-				// Remove node from your group list
-				grp.removeMember(node.getName) 
-
-				while (iter < numMsgs)
-				{
-					// See which messages the dead node held and move 
-					// move it to the successor or it's successor
-					if (grpRefreshBuffer.get(arrtemp.get(iter)).checkIfHolder(node))
-					{
-						var suc_node:UserNode = grp.getSuccessor(node)
-								// Already holder
-								if (grpRefreshBuffer.get(arrtemp.get(iter)).checkIfHolder(suc_node))
-								{
-									suc_node = grp.getSuccessor(suc_node)
-											println("Successor already holder");
-									if (grpRefreshBuffer.get(arrtemp.get(iter)).checkIfHolder(node))
-									{
-										// Already holder
-										println("Successor's successor already holder")
-
-									}
-									else
-									{
-										grpRefreshBuffer.get(arrtemp.get(iter)).changeHolder(node, suc_node)
-										if (suc_node.getName.equals(Shutterbug.curnode.getName))
-										{
-											// Request for the  image and store it here if you are the successor node
-										}
-									}
-
-								}
-								else
-								{
-									grpRefreshBuffer.get(arrtemp.get(iter)).changeHolder(node, suc_node)
-									if (suc_node.getName.equals(Shutterbug.curnode.getName))
-									{
-										// Request for the  image and store it here if you are the successor node
-									}
-								}
-
+					var grpName:String = grp.getName
+					println("In redistribution, current group is "+grpName)
+					var redList:HashMap[String,ArrayList[String]] = redistBuffer.get(grpName)
+					if(redList.containsKey(node.getName)){
+					  var imageList:ArrayList[String] = redList.get(node.getName)
+					  var i:Int = 0
+					  while(i<imageList.size()){
+					    var holderList:ArrayList[String] = refreshBuffer.get(grpName).get(imageList.get(i)).holder
+					    var deleteIndex:Int = -1
+					    if(holderList.get(0).equals(node.getName))
+					      deleteIndex = 0
+					    else
+					      deleteIndex = 1
+					    var otherIndex:Int = 1 ^ deleteIndex
+					    var suc1:UserNode = Shutterbug.curnode.getGroupFromName(grpName).getSuccessor(node)
+					    println("The successor of the dead node is "+suc1.getName)
+					    if(suc1.getName.equals(holderList.get(otherIndex))){
+					      println("Suc1 is the holder")
+					      var suc2:UserNode = Shutterbug.curnode.getGroupFromName(grpName).getSuccessor(suc1)
+					      println("The second successor "+suc2.getName)
+					      if(node.getName.equals(suc2.getName)){}
+					      else{
+					        if(suc2.getName.equals(Shutterbug.curnode.getName)){
+					          //query the suc1 and save the actual image
+					          
+					            var remoteActor = select(Node(suc1.getIP, suc1.getPort), Symbol(suc1.getName))
+					            var mes:UserMessage = new UserMessage(IMG_REQ,imageList.get(i) , Shutterbug.curnode, 
+					                Shutterbug.curnode.getGroupFromName(grpName), suc1, 
+					                refreshBuffer.get(grpName).get(imageList.get(i)).getFormat)
+					            println("sending IMG_REQ to "+suc1.getName)
+					            remoteActor !? mes
+					            match{
+					              case mesg:UserMessage =>
+					                println("Got the actual image data for redistribution")
+					                //Save the actual image data to disk
+					            }
+					          
+					        }
+					        refreshBuffer.get(grpName).get(imageList.get(i)).changeHolder(node, suc2)
+					      }
+					    }
+					    else{
+					      println("Suc1 is not the holder")
+					      if(suc1.getName.equals(Shutterbug.curnode.getName)){
+					          //query the suc1 and save the actual image
+					          var newnode:UserNode =  Shutterbug.curnode.getGroupFromName(grpName).getNodeFromName(holderList.get(otherIndex))
+					    	  
+					            var remoteActor = select(Node(newnode.getIP, newnode.getPort), Symbol(newnode.getName))
+					            var mes:UserMessage = new UserMessage(IMG_REQ,imageList.get(i) , Shutterbug.curnode, 
+					            Shutterbug.curnode.getGroupFromName(grpName), newnode, 
+					            refreshBuffer.get(grpName).get(imageList.get(i)).getFormat)
+					            println("sending IMG_REQ to "+newnode.getName)
+					            remoteActor !? mes
+					            match{
+					              case mesg:UserMessage =>
+					                println("Got the actual image data for redistribution")
+					                //Save the actual image data to disk
+					            }
+					          
+					       }
+					       refreshBuffer.get(grpName).get(imageList.get(i)).changeHolder(node, suc1)
+					    }
+					    i = i + 1
+					  }
+					  //remove node
+					  redistBuffer.get(grpName).remove(node.getName)
+					  Shutterbug.curnode.getGroupFromName(grpName).removeMember(node.getName)
+					  File.updateFile
 					}
-				}
+					else{
+					  println("Duplicated delete action")
+					}
 				println("procDead unlock")
 				refreshLock.unlock()	  
 			}
@@ -270,6 +292,10 @@ class MulticastService {
 							displayBuffer.get(grp).remove(index)
 							// Remove in any case
 							refreshBuffer.get(grp).remove(thumbHash)
+							var holder:ArrayList[String] = lkmsg.holder
+							redistBuffer.get(grp).get(holder.get(0)).remove(thumbHash)
+							if(holder.size()>1)
+							  redistBuffer.get(grp).get(holder.get(1)).remove(thumbHash)
 							refreshLock.unlock()
 							println("process delete unlock")
 
@@ -349,10 +375,16 @@ class MulticastService {
 			  refreshLock.lock()
 			  refreshBuffer.put(grpName,inv_data.get_refresh)
 			  displayBuffer.put(grpName,inv_data.get_display)
+			  redistBuffer.put(grpName,inv_data.get_redist)
 			  refreshLock.unlock()
 			 // displayRefreshBuf(grpName)
 			}
 			
-			
+			def addInvitedUser(name:String, grp:String){
+			  refreshLock.lock()
+			  var tmpList:ArrayList[String] = new ArrayList[String]
+			  redistBuffer.get(grp).put(name,tmpList)
+			  refreshLock.unlock()
+			}
 			
 }
