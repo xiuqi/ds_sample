@@ -12,7 +12,7 @@ object File {
 	  println("File lock acquired")
 	  var writer:PrintWriter = null
 	  try{
-	  	writer = new PrintWriter(new File(Shutterbug.grp_file_name ))
+	  	writer = new PrintWriter(new File(Shutterbug.curnode.getName+Shutterbug.grp_file_name ))
 	  }
 	  catch{
 	    case e:IOException =>
@@ -57,7 +57,7 @@ object File {
 	  filelock.lock()
 	  var res:HashMap[String, ArrayList[String]] = new HashMap[String, ArrayList[String]]
 	  try{
-	  	for(line <- Source.fromFile(Shutterbug.grp_file_name).getLines()){
+	  	for(line <- Source.fromFile(Shutterbug.curnode.getName+Shutterbug.grp_file_name).getLines()){
 	  		var nameAndMem:Array[String] = line.split(":")
 	  		var memList:Array[String] = nameAndMem(1).split(",")
 	  		var i:Int = 0

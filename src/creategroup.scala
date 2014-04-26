@@ -69,7 +69,7 @@ imagePath = ("sample.jpeg")
           try{
            val selected = iconBox.selection.items(0)
            val stringList:Array[String] = selected.split("/")
-           val grp = Shutterbug.curnode.returnGroupFromName(selected, stringList(0))
+           val grp = Shutterbug.curnode.getGroupFromName(selected)
            if(grp == null){
              println("Error: missing group")
            }

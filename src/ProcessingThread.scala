@@ -111,6 +111,29 @@ class ProcessingThread(inNode: UserNode) extends Runnable {
 							  var re_msg:UserMessage = new UserMessage(IMG_REP, "", Shutterbug.curnode, message.getGroup,
 							      null, null)
 							  reply(re_msg)
+							  
+							case RELOGIN =>
+						
+							var inv_data:InvitationData = new InvitationData
+							
+							// Get refresh and display buf
+							Shutterbug.mcs.addInvitedUser(message.getSender.getName, message.getData.toString())
+							Shutterbug.mcs.getBuffers(message.getData.toString(), inv_data)
+							
+							var inv_group:Group = Shutterbug.curnode.getGroupFromName(message.getData.toString())
+							var newUser:UserNode = new UserNode(message.getSender.getIP, message.getSender.getPort, message.getSender.getName)
+							inv_group.addMembers(message.getSender.getName, newUser)
+							
+							// TODO: Multicast that new node has relogged in to that group
+							Shutterbug.mcs.multicastNewMember(newUser, inv_group)
+							
+							// Get members
+							inv_group.returnMembersMap(inv_data)
+
+							var inv_msg:UserMessage = new UserMessage(RELOGIN_DATA, inv_data, Shutterbug.curnode, inv_group, 
+									null, null)
+
+							reply(inv_msg)
 					}
 
 				}
