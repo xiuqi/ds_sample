@@ -130,6 +130,7 @@ class ProcessingThread(inNode: UserNode) extends Runnable {
 							// Get members
 							inv_group.returnMembersMap(inv_data)
 
+							File.updateFile
 							var inv_msg:UserMessage = new UserMessage(RELOGIN_DATA, inv_data, Shutterbug.curnode, inv_group, 
 									null, null)
 
