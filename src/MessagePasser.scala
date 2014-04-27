@@ -18,12 +18,13 @@ object MessagePasser {
 			var bufImg = picture.convertToBI(message.getData.asInstanceOf[ImageIcon])
 					var hashVal = calculate_hash.md5_img(message.getFormat, bufImg)
 					println("Send blocking called")
-					if (dstNode.getName.equals(Shutterbug.curnode.getName))
-					{				
-						val image:Image = message.getData.asInstanceOf[ImageIcon].getImage().getScaledInstance(100, 100, Image.SCALE_DEFAULT)
+					val image:Image = message.getData.asInstanceOf[ImageIcon].getImage().getScaledInstance(100, 100, Image.SCALE_DEFAULT)
 								var thumbIcon = new ImageIcon(image)
 						var thumbBufImg = picture.convertToBI(thumbIcon)
 			var thumbHash = calculate_hash.md5_img(message.getFormat, thumbBufImg)
+					if (dstNode.getName.equals(Shutterbug.curnode.getName))
+					{				
+						
 				
 			ImageIO.write(bufImg, message.getFormat, new File("images/" +thumbHash+"."+message.getFormat));
 
@@ -64,7 +65,7 @@ object MessagePasser {
 								// Destination Node dead, multicast this to everyone else
 								println("Destination "+dstNode.getName+ " dead")
 								multicast_dead(dstNode.getName, grp)
-								var selectionNode:UserNode = grp.getNodeFromHash(hashVal)
+								var selectionNode:UserNode = grp.getNodeFromHash(thumbHash)
 								var selectionNode2:UserNode = grp.getSuccessor(selectionNode)
 								println("New node selected: "+selectionNode.getName+" and "+selectionNode2.getName)
 								var img_upload:UserMessage = new UserMessage(IMG_UPLOAD, message.getData.asInstanceOf[ImageIcon], Shutterbug.curnode, 

@@ -95,13 +95,16 @@ class ProcessingThread(inNode: UserNode) extends Runnable {
 							  var new_grp:Group = message.getGroup
 							  Shutterbug.curnode.addToGroup(new_grp)
 							  Shutterbug.mcs.setBuffers(message.getData.asInstanceOf[InvitationData], new_grp.getName)
+							  //Mark
+							  Shutterbug.mcs.addNodeRedistribution(new_grp, Shutterbug.curnode)
 							  
 							case NEW_MEMBER =>
-							  // TODO: Check for same group name and creator
 							  var req_grp:Group = Shutterbug.curnode.returnGroupFromName(message.getGroup.getName, 
 							      message.getGroup.getCreator)
 							  req_grp.addMembers(message.getData.asInstanceOf[UserNode].getName, message.getData.asInstanceOf[UserNode])
 							  Shutterbug.mcs.addInvitedUser(message.getData.asInstanceOf[UserNode].getName, message.getGroup.getName)
+							  Shutterbug.mcs.addNodeRedistribution(req_grp,message.getData.asInstanceOf[UserNode])
+							  
 							case NODE_DEAD =>
 							  println("Received dead node message")
 							  Shutterbug.mcs.processDeadNode(message.getGroup.getNodeFromName(message.getData.toString()),message.getGroup)

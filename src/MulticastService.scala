@@ -352,8 +352,7 @@ class MulticastService {
 
 						while (iter < grpCount)
 						{
-							if (members.get(iter).getName.equals(Shutterbug.curnode.getName) || 
-							    members.get(iter).getName.equals(unode.getName))
+							if (members.get(iter).getName.equals(unode.getName))
 							{
 								println("Not sending to node " + members.get(iter).getName)
 							}
@@ -385,6 +384,137 @@ class MulticastService {
 			  var tmpList:ArrayList[String] = new ArrayList[String]
 			  redistBuffer.get(grp).put(name,tmpList)
 			  refreshLock.unlock()
+			}
+			
+			def addNodeRedistribution(grp:Group, newnode:UserNode){
+			  println("Starting to redistribute for new user")
+			  var members:ArrayList[UserNode] = grp.returnMembers
+			  if(members.size()<2){
+			    println("We should never reach here")
+			    return
+			  }
+			  else if(members.size()==2){
+			    var newIndex:Int = -1
+			    if(members.get(0).getName.equals(newnode.getName)){
+			      newIndex = 0
+			    }
+			    else{
+			      newIndex = 1
+			    }
+			    var oldIndex:Int = newIndex ^ 1
+			    var oldNode:UserNode = members.get(oldIndex)
+			    //The new node takes all picture from old node
+			    if(Shutterbug.curnode.getName.equals(newnode.getName)){
+			      var imageList:ArrayList[String] = redistBuffer.get(grp.getName).get(oldNode.getName).clone().asInstanceOf[ArrayList[String]]
+			      var imagelen:Int = imageList.size()
+			      var itr:Int = 0
+			      while(itr < imagelen){
+			        var remoteActor = select(Node(oldNode.getIP, oldNode.getPort), Symbol(oldNode.getName))
+					var mes:UserMessage = new UserMessage(IMG_REQ,imageList.get(itr) , Shutterbug.curnode, 
+							grp, oldNode, refreshBuffer.get(grp.getName).get(imageList.get(itr)).getFormat)
+					println("sending IMG_REQ to "+oldNode.getName)
+					remoteActor !? mes
+					match{
+						case mesg:UserMessage =>
+							println("Got the actual image data for add redistribution from " + oldNode.getName)
+					        //Save the actual image data to disk
+			        }
+			        itr = itr + 1
+			      }
+			    }
+			    //Update lookup and redisBuffer
+			    refreshLock.lock()
+			    var imageList:ArrayList[String] = redistBuffer.get(grp.getName).get(oldNode.getName).clone().asInstanceOf[ArrayList[String]]
+			    var imagelen:Int = imageList.size()
+			    var itr:Int = 0
+			    while(itr < imagelen){
+			      redistBuffer.get(grp.getName).get(newnode.getName).add(imageList.get(itr))
+			      refreshBuffer.get(grp.getName).get(imageList.get(itr)).addHolder(newnode)
+			      itr = itr + 1
+			    }
+			    refreshLock.unlock()
+			    return
+			  }
+			  
+			  //If there are multiple nodes within a the group
+			  var suc:UserNode = grp.getSuccessor(newnode)
+			  var pre:UserNode = grp.getPredecessor(newnode)
+			  println("For add redistribution, suc: "+ suc.getName + " pre: "+pre.getName)
+			  //Find all the pictures that shared between suc and pre
+			  var imageList:ArrayList[String] = redistBuffer.get(grp.getName).get(pre.getName).clone().asInstanceOf[ArrayList[String]]
+			  var sucList:ArrayList[String] = redistBuffer.get(grp.getName).get(suc.getName).clone().asInstanceOf[ArrayList[String]]
+			  println("The size of pre list is "+imageList.size())
+			  var imagelen:Int = imageList.size()
+			  var itr:Int = 0
+			  while(itr < imagelen){
+			    //Find if the suc is also the holder
+			    if(sucList.contains(imageList.get(itr))){
+			      //recalculate the hash
+			      var selectedNode:UserNode = grp.getNodeFromHash(imageList.get(itr))
+			      println("The selectedNode is " + selectedNode.getName )
+			      if(selectedNode.getName.equals(pre.getName)){
+			        if(newnode.getName.equals(Shutterbug.curnode.getName)){
+			          //Ask for picture from pre
+			          
+			          var remoteActor = select(Node(pre.getIP, pre.getPort), Symbol(pre.getName))
+					  var mes:UserMessage = new UserMessage(IMG_REQ,imageList.get(itr) , Shutterbug.curnode, 
+							grp, pre, refreshBuffer.get(grp.getName).get(imageList.get(itr)).getFormat)
+					  println("sending IMG_REQ to "+pre.getName)
+					  remoteActor !? mes
+					  match{
+						  case mesg:UserMessage =>
+							  println("Got the actual image data for add redistribution from " + pre.getName)
+					        // TODO:Save the actual image data to disk
+			          }
+			        }
+			        //Deleted image
+			        if(suc.getName.equals(Shutterbug.curnode.getName)){
+			          // TODO:Delete actual image from disk
+			          println("Actual image deleted from "+Shutterbug.curnode.getName)
+			        }
+			        //Update two buffers
+			        refreshLock.lock()
+			        refreshBuffer.get(grp.getName).get(imageList.get(itr)).changeHolder(suc, newnode)
+			        redistBuffer.get(grp.getName).get(suc.getName).remove(imageList.get(itr))
+			        redistBuffer.get(grp.getName).get(newnode.getName).add(imageList.get(itr))
+			        refreshLock.unlock()
+			      }
+			      else if(selectedNode.getName.equals(newnode.getName)){
+			        if(newnode.getName.equals(Shutterbug.curnode.getName)){
+			          //Ask for picture from suc
+			          
+			          var remoteActor = select(Node(suc.getIP, suc.getPort), Symbol(suc.getName))
+					  var mes:UserMessage = new UserMessage(IMG_REQ,imageList.get(itr) , Shutterbug.curnode, 
+							grp, suc, refreshBuffer.get(grp.getName).get(imageList.get(itr)).getFormat)
+					  println("sending IMG_REQ to "+suc.getName)
+					  remoteActor !? mes
+					  match{
+						  case mesg:UserMessage =>
+							  println("Got the actual image data for add redistribution from " + suc.getName)
+					        // TODO:Save the actual image data to disk
+			          }
+			        }
+			        //Delete image
+			         if(pre.getName.equals(Shutterbug.curnode.getName)){
+			          // TODO:Delete actual image from disk
+			           println("Actual image deleted from "+Shutterbug.curnode.getName)
+			        }
+			        //update two buffers
+			         refreshLock.lock()
+			         refreshBuffer.get(grp.getName).get(imageList.get(itr)).changeHolder(pre, newnode)
+			         redistBuffer.get(grp.getName).get(pre.getName).remove(imageList.get(itr))
+			         redistBuffer.get(grp.getName).get(newnode.getName).add(imageList.get(itr))
+			         refreshLock.unlock()
+			      }
+			      else if(selectedNode.getName.equals(suc.getName)){
+			        if(members.size()>3)
+			        	println("We should never reach here!!!")
+			      }
+			      else
+			        println("We should never reach here!!!")
+			    }
+			    itr = itr + 1
+			  }
 			}
 			
 }

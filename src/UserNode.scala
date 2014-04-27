@@ -16,7 +16,7 @@ class UserNode(ip: String, port: Int, name: String) extends Serializable {
 	  CreateGroup.setGroupNameList(Shutterbug.curnode.returnGroupName)
 	  File.updateFile
 	}
-	
+		
 	def getName() : String=
 	{
 	  return name

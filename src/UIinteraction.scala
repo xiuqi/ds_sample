@@ -12,10 +12,11 @@ import javax.swing.ImageIcon
 import java.io.File
 import java.util.HashMap
 import java.util.ArrayList
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.Iterator
+import java.util.Map
+import java.util.Set
 import scala.actors.TIMEOUT
+import java.awt.Image
 
 
 object UIinteraction {
@@ -128,6 +129,13 @@ object UIinteraction {
 								  	mesg.getKind match{
 								  	case RELOGIN_DATA => 
 								  	  println("Relogin data received")
+								  	  
+								  	  var new_grp:Group = mesg.getGroup
+								  	  
+								  	  var my_grp = Shutterbug.curnode.getGroupFromName(new_grp.getName)
+								  	  
+								  	  my_grp.setMembers(new_grp.returnMembers)
+								  	  
 								  	  Shutterbug.mcs.setBuffers(mesg.getData.asInstanceOf[InvitationData], cur_grpname)
 								  	  transfer = true
 								  	  File.updateFile
@@ -241,7 +249,14 @@ object UIinteraction {
 
 				var img = new ImageIcon(in_msg)
 	var format = picture.getPicFormat(in_msg)
-	var hash_val = calculate_hash.md5_img(format, picture.convertToBI(img))
+	
+	val image:Image = img.getImage().getScaledInstance(100, 100, Image.SCALE_DEFAULT)
+	var thumbIcon = new ImageIcon(image)
+	var thumbBufImg = picture.convertToBI(thumbIcon)
+	var hash_val = calculate_hash.md5_img(format, thumbBufImg)
+	
+	//var hash_val = calculate_hash.md5_img(format, picture.convertToBI(img))
+	
 	var group = Shutterbug.curGroup
 	var curnode = Shutterbug.curnode
 	println("Hash value for message "+hash_val)
@@ -262,6 +277,4 @@ object UIinteraction {
 	MessagePasser.send_blocking(selectionNode, img_upload, group)
 	MessagePasser.send_blocking(selectionNode2, img_upload2, group)
 	}
-
-
 }

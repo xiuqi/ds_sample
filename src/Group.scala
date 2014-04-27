@@ -40,6 +40,27 @@ class Group(name:String) extends Serializable{
     return null    
   }
   
+  def getPredecessor(unode:UserNode) : UserNode =
+  {
+    memLock.lock()
+    var arrtemp:ArrayList[String] = new ArrayList[String];
+    var hash_val:String = calculate_hash.md5(unode.getName).toString()
+    arrtemp.addAll(members.keySet())
+    var grpSize:Int = members.size()
+    var iter:Int = 2* grpSize-1
+    while (iter >= grpSize)
+    {
+      if (arrtemp.get(iter-grpSize).equals(hash_val))
+      {
+        memLock.unlock()
+        return members.get(arrtemp.get((iter-1)%grpSize))
+      }
+      iter = iter - 1
+    }
+    memLock.unlock()
+    return null    
+  }
+  
   def returnMembers() : ArrayList[UserNode] =
   {
     memLock.lock()
@@ -47,6 +68,17 @@ class Group(name:String) extends Serializable{
     memlist.addAll(members.values())
     memLock.unlock()
     return memlist
+  }
+  
+  def setMembers(memList:ArrayList[UserNode]) 
+  {
+    var itr:Int = 0
+    var grpSize:Int = memList.size()
+    while (itr < grpSize)
+    {
+      addMembers(memList.get(itr).getName, memList.get(itr))
+      itr = itr + 1
+    }
   }
   
   def returnMembersMap(inv_data:InvitationData)
@@ -105,7 +137,7 @@ class Group(name:String) extends Serializable{
     	  j+=1
     	}
     	
-    	return members.get(arrtemp.get(i))       
+    	return members.get(arrtemp.get(i))
      
    }
    

@@ -71,7 +71,7 @@ object File {
 	  	}
 	  }
 	  catch{
-	    case ex: IOException => {
+	    case ex: Exception => {
             println("File does not exist or format error")
             filelock.unlock()
             return null
