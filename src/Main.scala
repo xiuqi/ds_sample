@@ -15,10 +15,10 @@ object Shutterbug {
     RemoteActor.classLoader = getClass().getClassLoader()
     var IMG_FOLDER:String = "images/"
     var grp_file_name:String = "groupInfo.txt"
-    var app_port:Int = 10233
+    var app_port:Int = 10234
     var chat_port:Int = 22222
     var check_inside:Int =0
-    var boot_ip:String = "localhost"//"ashutterbug.noip.me"
+    var boot_ip:String = "ashutterbug.noip.me"  //"localhost"
     var curnode:UserNode = null
     var curGroup:Group = null
     var logger:Logger = Logger.getLogger("MyLog");  

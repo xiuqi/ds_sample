@@ -8,6 +8,7 @@ import javax.swing.ImageIcon
 import msgKind._
 import java.io.File
 import java.util.Map
+import javax.imageio.ImageIO
 
 class MulticastService {
 
@@ -274,12 +275,13 @@ class MulticastService {
 				refreshLock.lock()
 				println("process delete lock")
 				var lkmsg:LookupMsg = refreshBuffer.get(grp).get(thumbHash)
+				if(lkmsg == null) return;
 				if (lkmsg.checkIfHolder(Shutterbug.curnode))
 				{
 					var fmt:String = lkmsg.getFormat
 							// TODO: Delete image from disk 
-							//var file:File = new File("images/"+thumbHash+"."+fmt)
-							//file.delete()
+							var file:File = new File("images/"+thumbHash+"."+fmt)
+							file.delete()
 
 				}						
 
@@ -466,11 +468,14 @@ class MulticastService {
 						  case mesg:UserMessage =>
 							  println("Got the actual image data for add redistribution from " + pre.getName)
 					        // TODO:Save the actual image data to disk
+							  ImageIO.write(picture.convertToBI(mesg.getData.asInstanceOf[ImageIcon]), mesg.getFormat, new File("images"+"/" + imageList.get(itr) +"."+mesg.getFormat));
 			          }
 			        }
 			        //Deleted image
 			        if(suc.getName.equals(Shutterbug.curnode.getName)){
 			          // TODO:Delete actual image from disk
+			          var file:File = new File("images/"+imageList.get(itr)+"."+refreshBuffer.get(grp.getName).get(imageList.get(itr)).getFormat)
+					  file.delete()
 			          println("Actual image deleted from "+Shutterbug.curnode.getName)
 			        }
 			        //Update two buffers
@@ -493,11 +498,14 @@ class MulticastService {
 						  case mesg:UserMessage =>
 							  println("Got the actual image data for add redistribution from " + suc.getName)
 					        // TODO:Save the actual image data to disk
+							  ImageIO.write(picture.convertToBI(mesg.getData.asInstanceOf[ImageIcon]), mesg.getFormat, new File("images"+"/" + imageList.get(itr) +"."+mesg.getFormat));
 			          }
 			        }
 			        //Delete image
 			         if(pre.getName.equals(Shutterbug.curnode.getName)){
 			          // TODO:Delete actual image from disk
+			           var file:File = new File("images/"+imageList.get(itr)+"."+refreshBuffer.get(grp.getName).get(imageList.get(itr)).getFormat)
+			           file.delete()
 			           println("Actual image deleted from "+Shutterbug.curnode.getName)
 			        }
 			        //update two buffers
@@ -553,7 +561,7 @@ class MulticastService {
 						var iter:Int = 0
 
 						var msgData:String = caption+"/"+imgHash; 
-			  println("msg"+msgData);
+						println("msg"+msgData);
 						while (iter < grpCount)
 						{
 							if (members.get(iter).getName.equals(Shutterbug.curnode.getName))
