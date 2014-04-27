@@ -8,6 +8,8 @@ class LookupMsg() extends Serializable {
   // HashMap for acks
   var holder:ArrayList[String] = new ArrayList[String] 
   var format:String = null;
+  var uploader:String = null
+  var caption:String = ""
   
   def setFormat(fmt:String)
   {
@@ -51,5 +53,26 @@ class LookupMsg() extends Serializable {
  
     return false
   }
+  def setUploader(nodeName:String){
+    uploader=nodeName
+  }
+  
+  def getUploader() : String ={
+    return uploader
+  }
+  
+  def setCaption(capt:String){
+    caption=capt
+    
+  }
+  
+  def getCaption() : String = {
+    return caption
+  }
+  
+  def getHolder(): ArrayList[String] = {
+    return holder;
+  }
+
 
 }

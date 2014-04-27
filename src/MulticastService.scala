@@ -135,7 +135,7 @@ class MulticastService {
 						
 			}
 
-			def addToRefreshBuffer(groupName:String, messg : ImageIcon, dstNode: UserNode, format:String)
+			def addToRefreshBuffer(sender:String,groupName:String, messg : ImageIcon, dstNode: UserNode, format:String)
 			{
 				refreshLock.lock()
 				println("addref lock")
@@ -151,6 +151,7 @@ class MulticastService {
 					var lkmsg:LookupMsg = new LookupMsg()
 				lkmsg.addHolder(dstNode)
 				lkmsg.setFormat(format)
+				lkmsg.setUploader(sender)
 				refreshBuffer.get(groupName).put(hash_val, lkmsg)
 				displayBuffer.get(groupName).add(messg)
 				
@@ -517,4 +518,92 @@ class MulticastService {
 			  }
 			}
 			
+			def getImageLookup(grpName:String,imgHash:String) : LookupMsg ={
+			  var lkpMsg:LookupMsg =new LookupMsg
+			  refreshLock.lock()
+			  lkpMsg=refreshBuffer.get(grpName).get(imgHash)
+			  refreshLock.unlock()
+			  return lkpMsg
+			  
+			}
+			
+			
+			def addImageCaption(grpName:String,imgHash:String,caption:String){
+			  refreshLock.lock()
+			  refreshBuffer.get(grpName).get(imgHash).setCaption(caption)
+			  refreshLock.unlock()
+			 			  
+			  if(checkInsideDispGrpMap(grpName)){
+				  displayLock.lock
+			    //if(dispMap.get(grpName).getCurImg!=null && dispMap.get(grpName).getCurImg.length()>0){
+				  if(imgHash.equals(dispMap.get(grpName).getCurImg))
+					dispMap.get(grpName).updateDisplay(caption)				
+			    //}
+				 displayLock.unlock   
+			  }
+			  
+			}
+			
+			def multicastImageCaption(caption:String,imgHash:String, group:Group){
+			  println("multicast caption called");
+			  var members:ArrayList[UserNode] = group.returnMembers
+
+						var grpCount:Int = members.size()
+
+						var iter:Int = 0
+
+						var msgData:String = caption+"/"+imgHash; 
+			  println("msg"+msgData);
+						while (iter < grpCount)
+						{
+							if (members.get(iter).getName.equals(Shutterbug.curnode.getName))
+							{
+								println("Not sending to node " + members.get(iter).getName)
+							}
+							else
+							{
+								println("Sending to node " + members.get(iter).getName)
+								var remoteActor = select(Node(members.get(iter).getIP, members.get(iter).getPort), Symbol(members.get(iter).getName))
+								var send_msg : UserMessage =  new UserMessage(NEW_CAPTION, msgData, Shutterbug.curnode,
+								    group, null, null)
+
+								// Send here 
+								remoteActor ! send_msg
+							}
+							iter = iter + 1
+						}
+			  
+			}
+			
+			
+			def displayImage(img:ImageIcon,grpName:String){
+			  
+			   displayLock.lock()
+			   if(checkInsideDispGrpMap(grpName))
+				   dispMap.get(grpName).showImage(img)
+			  displayLock.unlock()
+			  
+			}
+			
+			
+			def returnImageMap(grpName:String) : HashMap[String,LookupMsg]={
+			  
+			  var imgMap: HashMap[String,LookupMsg]=null
+			  refreshLock.lock()
+			  imgMap=refreshBuffer.get(grpName)
+			  refreshLock.unlock()
+			  
+			  return imgMap
+			}
+			
+			def addToChatBuffer(senderName:String, grpName:String, messg : String)
+			{
+				if(checkInsideDispGrpMap(grpName)){
+				  displayLock.lock()
+				  dispMap.get(grpName).updateChatArea(senderName + " : " + messg+"\n")
+				  displayLock.unlock()
+				}
+					
+			}
+
 }

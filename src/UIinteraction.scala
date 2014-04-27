@@ -17,6 +17,7 @@ import java.util.Map
 import java.util.Set
 import scala.actors.TIMEOUT
 import java.awt.Image
+import javax.imageio.ImageIO
 
 
 object UIinteraction {
@@ -46,6 +47,11 @@ object UIinteraction {
 	var pthread: ProcessingThread = new ProcessingThread(Shutterbug.curnode)
 	println("Started for node "+Shutterbug.curnode.getName+"...")
 	pthread.run
+	
+	 var pchatThread: ProcessingChatThread = new ProcessingChatThread(Shutterbug.curnode)
+      println("Started chat thread for node "+Shutterbug.curnode.getName+"...")
+      pchatThread.run
+
 
 	// Fetch the groups this node was part of here
 	var grpMap: HashMap[String, ArrayList[String]] = File.readFromFile
@@ -277,4 +283,345 @@ object UIinteraction {
 	MessagePasser.send_blocking(selectionNode, img_upload, group)
 	MessagePasser.send_blocking(selectionNode2, img_upload2, group)
 	}
+		
+	def onImageSelect(img:ImageIcon) : LookupMsg ={
+			var lkpMsg:LookupMsg = new LookupMsg()
+			var imgHash=calculate_hash.md5_img("png", picture.convertToBI(img))
+			lkpMsg=Shutterbug.mcs.getImageLookup(Shutterbug.curGroup.getName, imgHash)
+			return lkpMsg;
+	 	
+	}
+	
+	def onSaveCaption(caption:String,img:ImageIcon) {
+		var imgHash=calculate_hash.md5_img("png", picture.convertToBI(img))
+		Shutterbug.mcs.addImageCaption(Shutterbug.curGroup.getName, imgHash, caption)
+		Shutterbug.mcs.multicastImageCaption(caption, imgHash, Shutterbug.curGroup)
+	  
+	}
+	
+
+	def onDoubleClick(thumb:ImageIcon){
+	    var thumbHash=calculate_hash.md5_img("png", picture.convertToBI(thumb))
+	    var img_group:Group=Shutterbug.curGroup
+	    //Get the holder of the image
+	    var lkpMsg:LookupMsg = new LookupMsg()
+	    lkpMsg=Shutterbug.mcs.getImageLookup(Shutterbug.curGroup.getName, thumbHash)
+	    var holderList:ArrayList[String]=lkpMsg.getHolder
+	    var format=lkpMsg.getFormat
+	    var img:ImageIcon=new ImageIcon()
+	    
+	    println("No of holders" + holderList.size)
+	   
+	    //If current node is holder
+	   if(holderList.contains(Shutterbug.curnode.getName)){
+	     //get from the images folder
+	     println("Retrieving for my images")
+	     var imgPath:String ="images/"+thumbHash+"."+format
+	     var image:File= new File(imgPath)
+							  
+		if(image.exists()){
+	     img=new ImageIcon(imgPath);
+	     Shutterbug.mcs.displayImage(img, img_group.getName)
+		}
+	     return
+	   }
+	    
+	   else{
+	     //Send to first user in the holder list
+	     
+	     actor{
+			 println("Sending to first node in holder list");
+	         var holder:String=holderList.get(0)
+	        val remoteActor = select(Node(Shutterbug.boot_ip, 10111), 'ragtime)
+	        var sending=true
+	        var count=0
+	        
+	        loopWhile(sending){
+	        println("sending to" +holder);
+			val mes:BootMessage = new BootMessage(QUERY, holder, "", "",0, null)
+			var ip:String = ""
+			var port:Int = 0
+			println("Ready to query")
+					remoteActor !? mes 
+							match {
+							case mesg: BootMessage =>
+							mesg.getKind match {
+							case BOOT_ACK =>
+							println("Received bootack")
+							ip = mesg.getIP
+							port = mesg.getPort
+							case BOOTSTRAP_ERROR =>
+							println("Error: " + mesg.getData)
+							return
+							}
+					}
+					if(ip.length() == 0){
+						println("IP Address empty")
+						return
+					}
+
+					var waitTime:Long = 5000
+					val userActor = select(Node(ip, port), Symbol(holder))
+					var getImg:UserMessage = new UserMessage(IMG_GET, thumbHash,
+					    Shutterbug.curnode, img_group, null, format)
+					count=count+1;
+					println(count);
+					userActor ! getImg
+					receiveWithin(waitTime)
+					{
+					  case TIMEOUT =>
+					    if(count==2)
+					    {
+					      sending=false
+					    }
+					    else
+					    {
+					      println("Timeout");
+					      holder=holderList.get(1)
+					    }
+					    
+					   case mesg:UserMessage=>
+					    mesg.getKind match{
+					      				       
+					    case IMG_GET_NOACK=>
+					    println("Image not available at holder1")
+					    if(count==2)
+					    {
+					      sending=false
+					    }
+					    else
+					    {
+					      holder=holderList.get(1)
+					    }
+					      
+					    case IMG_GET_ACK =>
+					    img=mesg.getData.asInstanceOf[ImageIcon]        
+					    Shutterbug.mcs.displayImage(img, img_group.getName)
+					    sending=false					         
+					    }//match
+					}//receive within
+	     		}//loop
+	        }//actor
+	   }//else
+		    
+	}//func end
+	
+	
+	def onDownload(){
+	  
+	  var img_group:Group = Shutterbug.curGroup
+	  var userMap:HashMap[String,UserNode]=null
+	  var imageMap:HashMap[String,LookupMsg]=Shutterbug.mcs.returnImageMap(img_group.getName)
+	  var dirName:String=img_group.getName
+	  
+	  
+	  println(dirName)
+	  dirName=dirName.replace("/", "_")
+	  println(dirName)
+	  //Create a directory for the group
+	  println("ImageGroupname " + img_group.getName)
+	
+	  var imgDir:File = new File(dirName)
+	  
+	  println("Directory" + imgDir)
+	  
+	  if(imgDir.exists()){
+       deleteDirectory(imgDir)
+	   println("Directory deleted")
+	  }
+	   println("Creating directoory " + imgDir)
+	   imgDir.mkdir()
+	  //loop over keyset
+	  
+	  var imgtemp:ArrayList[String] = new ArrayList[String];
+      imgtemp.addAll(imageMap.keySet())
+      var imgNum:Int = imageMap.size()
+      var iter:Int = 0
+    
+      while (iter < imgNum)
+      {
+        var thumbHash=imgtemp.get(iter);
+        var lkpMsg:LookupMsg=imageMap.get(thumbHash)
+        var holderList:ArrayList[String]=lkpMsg.getHolder
+	    var format=lkpMsg.getFormat
+	    var img:ImageIcon=new ImageIcon()
+        
+        println("No of holders" + holderList.size)
+	   
+	    //If current node is holder
+	   if(holderList.contains(Shutterbug.curnode.getName)){
+	     //get from the images folder
+	     println("Retrieving for my images")
+	     var imgPath:String ="images/"+thumbHash+"."+format
+	     var image:File= new File(imgPath)
+							  
+		if(image.exists()){
+	    img=new ImageIcon(imgPath);
+	    ImageIO.write(picture.convertToBI(img), format, new File(imgDir+"/" + thumbHash +"."+format));
+		}
+	   }
+	    
+	   else{
+	     //Send to first user in the holder list
+	     
+	     actor{
+			 println("Sending to first node in holder list");
+	         var holder:String=holderList.get(0)
+	        val remoteActor = select(Node(Shutterbug.boot_ip, 10111), 'ragtime)
+	        var sending=true
+	        var count=0
+	        
+	        loopWhile(sending){
+	        println("sending to" +holder);
+			val mes:BootMessage = new BootMessage(QUERY, holder, "", "",0, null)
+			var ip:String = ""
+			var port:Int = 0
+			println("Ready to query")
+					remoteActor !? mes 
+							match {
+							case mesg: BootMessage =>
+							mesg.getKind match {
+							case BOOT_ACK =>
+							println("Received bootack")
+							ip = mesg.getIP
+							port = mesg.getPort
+							case BOOTSTRAP_ERROR =>
+							println("Error: " + mesg.getData)
+							return
+							}
+					}
+					if(ip.length() == 0){
+						println("IP Address empty")
+						return
+					}
+
+					var waitTime:Long = 5000
+					val userActor = select(Node(ip, port), Symbol(holder))
+					var getImg:UserMessage = new UserMessage(IMG_GET, thumbHash,
+					    Shutterbug.curnode, img_group, null, format)
+					count=count+1;
+					println(count);
+					userActor ! getImg
+					receiveWithin(waitTime)
+					{
+					  case TIMEOUT =>
+					    if(count==2)
+					    {
+					      sending=false
+					    }
+					    else
+					    {
+					      println("Timeout");
+					      holder=holderList.get(1)
+					    }
+					    
+					   case mesg:UserMessage=>
+					    mesg.getKind match{
+					      				       
+					    case IMG_GET_NOACK=>
+					    println("Image not available at holder1")
+					    if(count==2)
+					    {
+					      sending=false
+					    }
+					    else
+					    {
+					      holder=holderList.get(1)
+					    }
+					      
+					    case IMG_GET_ACK =>
+					    println("Image received")
+					    img=mesg.getData.asInstanceOf[ImageIcon]        
+					    ImageIO.write(picture.convertToBI(img), format, new File(imgDir+"/" + thumbHash +"."+format));
+					    sending=false					         
+					    }//match
+					}//receive within
+	     		}//loop
+	        }//actor
+	   }//else
+        
+        
+        
+      
+      iter = iter + 1
+      }
+	  
+	  
+	}
+	
+	
+	
+	 def deleteDirectory(file:File)
+	 {
+ 
+    	if(file.isDirectory()){
+ 
+    		//directory is empty, then delete it
+    		if(file.list().length==0){
+     		   file.delete();
+    		   System.out.println("Directory is deleted : " 
+                                                 + file.getAbsolutePath());
+ 
+    		}else{
+ 
+    		   //list all the directory contents
+        	   var files:Array[String] = file.list();
+    			var iter =0
+    			var fileNum = files.length
+        	   //for (String temp : files)
+        	   while(iter<fileNum){
+        	      //construct the file structure
+        	      var fileDelete:File = new File(file, files(iter));
+         	      //recursive delete
+        	     deleteDirectory(fileDelete);
+        	     iter=iter+1
+        	   }
+ 
+        	   //check the directory again, if empty then delete it
+        	   if(file.list().length==0){
+           	     file.delete();
+        	     System.out.println("Directory is deleted : " 
+                                                  + file.getAbsolutePath());
+        	   }
+    		}
+ 
+    	}else{
+    		//if file, then delete it
+    		file.delete();
+    		System.out.println("File is deleted : " + file.getAbsolutePath());
+    	}
+    }
+	
+	
+	 def onChat(chatText:String){
+	   var grp = Shutterbug.curGroup
+	      
+	  
+		// Fetch the group members for the group
+		var members:ArrayList[UserNode] = grp.returnMembers
+
+				var grpCount:Int = members.size()
+
+				var iter:Int = 0
+
+				while (iter < grpCount)
+				{
+					if (members.get(iter).getName.equals(Shutterbug.curnode.getName))
+					{
+						println("Not sending to node " + members.get(iter).getName)
+					}
+					else
+					{
+						println("Sending chat to node " + members.get(iter).getName)
+						var remoteActor = select(Node(members.get(iter).getIP, Shutterbug.chat_port), Symbol(members.get(iter).getName))
+					//	var send_msg : UserMessage = new UserMessage(CHAT, chatText, Shutterbug.curnode, grp, null,null)
+						val msg:UserMessage = new UserMessage(CHAT, chatText, Shutterbug.curnode, grp, null, null)
+						// Send here 
+						remoteActor ! msg
+					}
+					iter = iter + 1
+				}
+
+	   
+	 }
 }

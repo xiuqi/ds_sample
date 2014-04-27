@@ -47,7 +47,7 @@ class ProcessingThread(inNode: UserNode) extends Runnable {
 							//"Image Received", Shutterbug.curnode, message.getGroup, message.getStorer)
 							// Convert to thumbnail and add to refresh buffer here
 							
-							Shutterbug.mcs.addToRefreshBuffer(message.getGroup.getName, thumbIcon,
+							Shutterbug.mcs.addToRefreshBuffer(message.getSender.getName,message.getGroup.getName, thumbIcon,
 							    message.getStorer, message.getFormat)
 							reply(reply_message)
 
@@ -55,7 +55,7 @@ class ProcessingThread(inNode: UserNode) extends Runnable {
 								println("Message Kind received by "+inNode.getName+" is THUMB_PUT from "+msgSender.getName)
 								var reply_msg:UserMessage = new UserMessage(THUMB_ACK, message.getData.asInstanceOf[ImageIcon],
 								    Shutterbug.curnode, message.getGroup, message.getStorer, message.getFormat)
-								Shutterbug.mcs.addToRefreshBuffer(message.getGroup.getName, message.getData.asInstanceOf[ImageIcon],
+								Shutterbug.mcs.addToRefreshBuffer(message.getSender.getName,message.getGroup.getName, message.getData.asInstanceOf[ImageIcon],
 								    message.getStorer, message.getFormat)
 							
 								remoteSender ! reply_msg
@@ -138,6 +138,36 @@ class ProcessingThread(inNode: UserNode) extends Runnable {
 									null, null)
 
 							reply(inv_msg)
+							
+							case NEW_CAPTION =>
+							  println("Received new caption");
+							  var req_grp:Group = Shutterbug.curnode.getGroupFromName(message.getGroup.getName)
+						      println("data " +  message.getData.asInstanceOf[String]);
+							  var data:String = message.getData.asInstanceOf[String]
+							  var inputs:Array[String]=data.split("/");
+							  var caption:String=inputs(0)
+							  var imgHash:String=inputs(1)
+							  println("imgHash " +inputs(0)+" caption " +inputs(1)+req_grp.getName);
+							  Shutterbug.mcs.addImageCaption(req_grp.getName, imgHash, caption)							      
+							
+							case IMG_GET =>
+							 
+							  var imgPath:String="images/"+message.getData.asInstanceOf[String]+"."+message.getFormat
+							  var image:File= new File(imgPath)
+							  
+							  if(image.exists()){
+							  var img:ImageIcon=new ImageIcon(imgPath)
+							  var replyImg:UserMessage=new UserMessage(IMG_GET_ACK, img, Shutterbug.curnode, message.getGroup,
+							      null, null)
+							  reply(replyImg)
+							  }
+							else{
+							  println("Image not present")
+								var replyImg:UserMessage=new UserMessage(IMG_GET_NOACK, "File not present", Shutterbug.curnode, 
+									    message.getGroup,null, null)
+								reply(replyImg)
+								  
+							}
 					}
 
 				}

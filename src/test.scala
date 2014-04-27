@@ -2,19 +2,17 @@ import swing._
 import scala.swing.BorderPanel.Position._
 import java.awt.Point
 import scala.swing.event.ButtonClicked
-//import javax.swing.text.html.BackgroundImage
 import bootMsgKind._
 import Swing._
-import javax.swing.JLabel;
+import javax.swing.JLabel
 import javax.swing.{Icon, ImageIcon}
 import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
-import java.io.File
-
 import scala.actors.Actor._
 import scala.actors.remote.Node
 import scala.actors.remote.RemoteActor
 import scala.actors.remote.RemoteActor._
+
 
 object LoginRegister extends SimpleSwingApplication{
   
@@ -38,46 +36,59 @@ object LoginRegister extends SimpleSwingApplication{
   pasLabel.minimumSize_=(new Dimension(120,25))
   
    var label = new Label {
-  icon = new ImageIcon("shutterbug.jpg")
+  //icon = new ImageIcon("shutterbug.jpg")
+    text="ASSIST SHUTTERBUG"
+    
 }
 //   label.foreground = java.awt.Color.WHITE
    label.horizontalAlignment = scala.swing.Alignment.Left
    label.verticalAlignment = scala.swing.Alignment.Top
-   label.preferredSize= (new Dimension(50,50))
+   label.foreground=java.awt.Color.white
+  // label.preferredSize= (new Dimension(50,50))
+   label.font=new Font("Comic Sans MS",0,50)
+   
+   var shareLabel = new Label("Share your photos!!")
+   shareLabel.font=new Font("Comic Sans MS",0,20)
+   shareLabel.foreground=java.awt.Color.white
 
   lazy val ui = new ImagePanel(){
     
-    imagePath = ("sample.jpeg")
+    imagePath = ("cam.jpeg")
 
-  val box0 = new BoxPanel(Orientation.Horizontal) {
+    val box0 = new BoxPanel(Orientation.Vertical) {
       contents += label
-    }
-
+      contents+=shareLabel
+     }
+   //box0.border=Swing.EmptyBorder(0, 5, 5, 0)
    box0.background_=(new Color (0,0,0,0))
    contents+= box0;
    
    contents += VStrut(10)
   val box1 = new BoxPanel(Orientation.Horizontal){
-    		
+
     		contents+=userLabel
     		contents+=userName
     		
   }
   contents += VStrut(10)
-  box1.location.setLocation(250, 250) 
+  //box1.location.setLocation(250, 250) 
+  box1.border=Swing.EmptyBorder(0, 175, 0, 0)
   box1.background_=(new Color (0,0,0,0))
   
   contents += box1
-    contents += VStrut(10)
+  contents += VStrut(10)
   val box2 = new BoxPanel(Orientation.Horizontal){
     		
     		contents += pasLabel
     		contents+=password
     		
   }
+    box2.border=Swing.EmptyBorder(0, 175, 0, 0)
     box2.background_=(new Color (0,0,0,0))
     contents+=box2
- contents += VStrut(10)
+contents += VStrut(10)
+ 
+ 
     val box3 = new BoxPanel(Orientation.Horizontal){
       
       contents+=login
@@ -85,28 +96,21 @@ object LoginRegister extends SimpleSwingApplication{
       
     }
     
+      box3.border=Swing.EmptyBorder(0, 175, 0, 0)
+   box3.background_=(new Color (0,0,0,0))
     contents+=box3
-    border = Swing.EmptyBorder(200,200,200,200)
-//      layout(new FlowPanel(FlowPanel.Alignment.Right)(
-//      Button("Login") {
-//        if (makeLogin()) {
-//          Dialog.showMessage(this, "Login Done", "Login Done", Dialog.Message.Error)
-//         // auth = Some(Auth(userName.text, password.text))
-//         // close()
-//        } else {
-//          Dialog.showMessage(this, "Wrong username or password!", "Login Error", Dialog.Message.Error)
-//        }
-//      }
-//      
-//    )
-    
+   
+    border = Swing.EmptyBorder(70, 100, 100, 100)   
   }
    
     RemoteActor.classLoader = getClass().getClassLoader()
     def top = new MainFrame {
 
-    title = "Login"
-    minimumSize = new Dimension(1000,1000)
+    title = "Welcome to Assist ShutterBug"
+    minimumSize= new Dimension(600,600)
+    maximumSize= new Dimension(600,600)
+    resizable=false
+    iconImage_=(new ImageIcon("frameIcon.png").getImage())
     ui.location.setLocation(250, 250)
     resizable = (false)
     contents = ui

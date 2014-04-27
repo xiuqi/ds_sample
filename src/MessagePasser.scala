@@ -35,7 +35,7 @@ object MessagePasser {
 			multicast_msg(dstNode, mesg, grp)
 			//Shutterbug.curnode.addToRefreshBuffer(new ImageIcon(image))
 
-			Shutterbug.mcs.addToRefreshBuffer(grp.getName, thumbIcon, dstNode, message.getFormat)
+			Shutterbug.mcs.addToRefreshBuffer(message.getSender.getName,grp.getName, thumbIcon, dstNode, message.getFormat)
 
 					}
 					else
@@ -86,7 +86,7 @@ object MessagePasser {
 							case UPLOAD_ACK =>
 							println("Got UPLOAD_ACK in " + Shutterbug.curnode.getName + " from "+ mesg.getSender.getName)
 
-							Shutterbug.mcs.addToRefreshBuffer(grp.getName, mesg.getData.asInstanceOf[ImageIcon], dstNode, message.getFormat)
+							Shutterbug.mcs.addToRefreshBuffer(message.getSender.getName,grp.getName, mesg.getData.asInstanceOf[ImageIcon], dstNode, message.getFormat)
 							multicast_msg(dstNode, mesg, grp)
 							println("Back from multicast_msg############")
 							sending = true
