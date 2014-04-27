@@ -157,8 +157,9 @@ class ProcessingThread(inNode: UserNode) extends Runnable {
 							  
 							  if(image.exists()){
 							  var img:ImageIcon=new ImageIcon(imgPath)
+							  var format:String = Shutterbug.mcs.getImageLookup(message.getGroup.getName, message.getData.asInstanceOf[String]).getFormat
 							  var replyImg:UserMessage=new UserMessage(IMG_GET_ACK, img, Shutterbug.curnode, message.getGroup,
-							      null, null)
+							      null, format)
 							  reply(replyImg)
 							  }
 							else{

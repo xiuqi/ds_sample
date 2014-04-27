@@ -413,15 +413,22 @@ class MulticastService {
 			      var itr:Int = 0
 			      while(itr < imagelen){
 			        var remoteActor = select(Node(oldNode.getIP, oldNode.getPort), Symbol(oldNode.getName))
-					var mes:UserMessage = new UserMessage(IMG_REQ,imageList.get(itr) , Shutterbug.curnode, 
+					var mes:UserMessage = new UserMessage(IMG_GET,imageList.get(itr) , Shutterbug.curnode, 
 							grp, oldNode, refreshBuffer.get(grp.getName).get(imageList.get(itr)).getFormat)
 					println("sending IMG_REQ to "+oldNode.getName)
 					remoteActor !? mes
 					match{
 						case mesg:UserMessage =>
+						  mesg.getKind match{
+						    case IMG_GET_ACK =>
 							println("Got the actual image data for add redistribution from " + oldNode.getName)
-					        //Save the actual image data to disk
-			        }
+					        //TODO: Save the actual image data to disk
+							
+							 ImageIO.write(picture.convertToBI(mesg.getData.asInstanceOf[ImageIcon]), mesg.getFormat, new File("images"+"/" + imageList.get(itr) +"."+mesg.getFormat));
+						    case IMG_GET_NOACK =>
+						      println("Error downloading images")
+						  }
+					}
 			        itr = itr + 1
 			      }
 			    }
@@ -460,15 +467,21 @@ class MulticastService {
 			          //Ask for picture from pre
 			          
 			          var remoteActor = select(Node(pre.getIP, pre.getPort), Symbol(pre.getName))
-					  var mes:UserMessage = new UserMessage(IMG_REQ,imageList.get(itr) , Shutterbug.curnode, 
+					  var mes:UserMessage = new UserMessage(IMG_GET,imageList.get(itr) , Shutterbug.curnode, 
 							grp, pre, refreshBuffer.get(grp.getName).get(imageList.get(itr)).getFormat)
 					  println("sending IMG_REQ to "+pre.getName)
 					  remoteActor !? mes
 					  match{
 						  case mesg:UserMessage =>
-							  println("Got the actual image data for add redistribution from " + pre.getName)
-					        // TODO:Save the actual image data to disk
-							  ImageIO.write(picture.convertToBI(mesg.getData.asInstanceOf[ImageIcon]), mesg.getFormat, new File("images"+"/" + imageList.get(itr) +"."+mesg.getFormat));
+							  mesg.getKind match{
+						    case IMG_GET_ACK =>
+							println("Got the actual image data for add redistribution from " + pre.getName)
+					        //TODO: Save the actual image data to disk
+							
+							 ImageIO.write(picture.convertToBI(mesg.getData.asInstanceOf[ImageIcon]), mesg.getFormat, new File("images"+"/" + imageList.get(itr) +"."+mesg.getFormat));
+						    case IMG_GET_NOACK =>
+						      println("Error downloading images")
+						  }
 			          }
 			        }
 			        //Deleted image
@@ -490,15 +503,21 @@ class MulticastService {
 			          //Ask for picture from suc
 			          
 			          var remoteActor = select(Node(suc.getIP, suc.getPort), Symbol(suc.getName))
-					  var mes:UserMessage = new UserMessage(IMG_REQ,imageList.get(itr) , Shutterbug.curnode, 
+					  var mes:UserMessage = new UserMessage(IMG_GET,imageList.get(itr) , Shutterbug.curnode, 
 							grp, suc, refreshBuffer.get(grp.getName).get(imageList.get(itr)).getFormat)
 					  println("sending IMG_REQ to "+suc.getName)
 					  remoteActor !? mes
 					  match{
 						  case mesg:UserMessage =>
-							  println("Got the actual image data for add redistribution from " + suc.getName)
-					        // TODO:Save the actual image data to disk
-							  ImageIO.write(picture.convertToBI(mesg.getData.asInstanceOf[ImageIcon]), mesg.getFormat, new File("images"+"/" + imageList.get(itr) +"."+mesg.getFormat));
+							  mesg.getKind match{
+						    case IMG_GET_ACK =>
+							println("Got the actual image data for add redistribution from " + suc.getName)
+					        //TODO: Save the actual image data to disk
+							
+							 ImageIO.write(picture.convertToBI(mesg.getData.asInstanceOf[ImageIcon]), mesg.getFormat, new File("images"+"/" + imageList.get(itr) +"."+mesg.getFormat));
+						    case IMG_GET_NOACK =>
+						      println("Error downloading images")
+						  }
 			          }
 			        }
 			        //Delete image
