@@ -35,8 +35,9 @@ class ProcessingThread(inNode: UserNode) extends Runnable {
 							var thumbBufImg = picture.convertToBI(thumbIcon)
 							var thumbHash = calculate_hash.md5_img(message.getFormat, thumbBufImg)
 							var bufImg = picture.convertToBI(message.getData.asInstanceOf[ImageIcon])
-
-							ImageIO.write(bufImg, message.getFormat, new File("images/" +thumbHash+"."+message.getFormat));
+							var imgDirName = message.getGroup.getName + Shutterbug.IMG_FOLDER
+							imgDirName=imgDirName.replaceFirst("/", "_");
+							ImageIO.write(bufImg, message.getFormat, new File(imgDirName +thumbHash+"."+message.getFormat));
 
 							println("Thumbnail created")
 
@@ -151,8 +152,9 @@ class ProcessingThread(inNode: UserNode) extends Runnable {
 							  Shutterbug.mcs.addImageCaption(req_grp.getName, imgHash, caption)							      
 							
 							case IMG_GET =>
-							 
-							  var imgPath:String="images/"+message.getData.asInstanceOf[String]+"."+message.getFormat
+							  var imgDirName = message.getGroup.getName + Shutterbug.IMG_FOLDER
+							  imgDirName=imgDirName.replaceFirst("/", "_");
+							  var imgPath:String=imgDirName+message.getData.asInstanceOf[String]+"."+message.getFormat
 							  var image:File= new File(imgPath)
 							  
 							  if(image.exists()){

@@ -25,8 +25,9 @@ object MessagePasser {
 					if (dstNode.getName.equals(Shutterbug.curnode.getName))
 					{				
 						
-				
-			ImageIO.write(bufImg, message.getFormat, new File("images/" +thumbHash+"."+message.getFormat));
+			var imgDirName:String=grp.getName+Shutterbug.IMG_FOLDER	
+			imgDirName=imgDirName.replaceFirst("/", "_");
+			ImageIO.write(bufImg, message.getFormat, new File(imgDirName +thumbHash+"."+message.getFormat));
 
 			println("Thumbnail created")
 

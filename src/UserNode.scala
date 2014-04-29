@@ -2,6 +2,7 @@ import scala.collection.mutable.ArraySeq
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.concurrent.locks.ReentrantLock
+import java.io.File
 
 
 class UserNode(ip: String, port: Int, name: String) extends Serializable {
@@ -13,6 +14,16 @@ class UserNode(ip: String, port: Int, name: String) extends Serializable {
 	  userLock.lock()
 	  groupList.add(dstGrp)
 	  userLock.unlock()
+	  
+	  var imgdirName:String = dstGrp.getName+"_images";
+	  imgdirName=imgdirName.replace("/", "_");
+	  var imgDir:File = new File(imgdirName);
+	  
+	  println(imgdirName);
+	  
+	  if(!imgDir.exists())
+		  imgDir.mkdir()
+	  
 	  CreateGroup.setGroupNameList(Shutterbug.curnode.returnGroupName)
 	  File.updateFile
 	}

@@ -194,16 +194,18 @@ object UIinteraction {
 							port = mesg.getPort
 							case BOOTSTRAP_ERROR =>
 							println("Error: " + mesg.getData)
-							return
+							Dialog.showMessage(null, name+ "User is unavailable", "User not available")
+							return 
 
 							}
 					}
 					if(ip.length() == 0){
 						println("IP Address empty")
-						return
+						Dialog.showMessage(null, name+ "User is unavailable", "User not available")
+						return 
 								//						return -1
 					}
-
+			
 					val userActor = select(Node(ip, port), Symbol(name))
 							var inviteMes:UserMessage = new UserMessage(INVITATION, inv_group.getName, 
 									Shutterbug.curnode, inv_group, null, null)
@@ -316,7 +318,9 @@ object UIinteraction {
 	   if(holderList.contains(Shutterbug.curnode.getName)){
 	     //get from the images folder
 	     println("Retrieving for my images")
-	     var imgPath:String ="images/"+thumbHash+"."+format
+	      var imgDirName = img_group.getName + Shutterbug.IMG_FOLDER
+	      imgDirName=imgDirName.replaceFirst("/", "_");
+	     var imgPath:String =imgDirName+thumbHash+"."+format
 	     var image:File= new File(imgPath)
 							  
 		if(image.exists()){
@@ -452,7 +456,9 @@ object UIinteraction {
 	   if(holderList.contains(Shutterbug.curnode.getName)){
 	     //get from the images folder
 	     println("Retrieving for my images")
-	     var imgPath:String ="images/"+thumbHash+"."+format
+	      var imgDirName = img_group.getName + Shutterbug.IMG_FOLDER
+	      imgDirName=imgDirName.replaceFirst("/", "_");
+	     var imgPath:String =imgDirName+thumbHash+"."+format
 	     var image:File= new File(imgPath)
 							  
 		if(image.exists()){

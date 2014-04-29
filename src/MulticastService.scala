@@ -280,7 +280,9 @@ class MulticastService {
 				{
 					var fmt:String = lkmsg.getFormat
 							// TODO: Delete image from disk 
-							var file:File = new File("images/"+thumbHash+"."+fmt)
+							var imgDirName= grp+Shutterbug.IMG_FOLDER
+							imgDirName=imgDirName.replaceFirst("/", "_");
+							var file:File = new File(imgDirName+thumbHash+"."+fmt)
 							file.delete()
 
 				}						
@@ -390,7 +392,10 @@ class MulticastService {
 			}
 			
 			def addNodeRedistribution(grp:Group, newnode:UserNode){
+			  
 			  println("Starting to redistribute for new user")
+			  var imgDirName = grp.getName + Shutterbug.IMG_FOLDER
+			  imgDirName=imgDirName.replaceFirst("/", "_");
 			  var members:ArrayList[UserNode] = grp.returnMembers
 			  if(members.size()<2){
 			    println("We should never reach here")
@@ -423,8 +428,8 @@ class MulticastService {
 						    case IMG_GET_ACK =>
 							println("Got the actual image data for add redistribution from " + oldNode.getName)
 					        //TODO: Save the actual image data to disk
-							
-							 ImageIO.write(picture.convertToBI(mesg.getData.asInstanceOf[ImageIcon]), mesg.getFormat, new File("images"+"/" + imageList.get(itr) +"."+mesg.getFormat));
+							 ImageIO.write(picture.convertToBI(mesg.getData.asInstanceOf[ImageIcon]), mesg.getFormat, 
+							     new File(imgDirName + imageList.get(itr) +"."+mesg.getFormat));
 						    case IMG_GET_NOACK =>
 						      println("Error downloading images")
 						  }
@@ -477,8 +482,8 @@ class MulticastService {
 						    case IMG_GET_ACK =>
 							println("Got the actual image data for add redistribution from " + pre.getName)
 					        //TODO: Save the actual image data to disk
-							
-							 ImageIO.write(picture.convertToBI(mesg.getData.asInstanceOf[ImageIcon]), mesg.getFormat, new File("images"+"/" + imageList.get(itr) +"."+mesg.getFormat));
+							ImageIO.write(picture.convertToBI(mesg.getData.asInstanceOf[ImageIcon]), mesg.getFormat, 
+							     new File(imgDirName + imageList.get(itr) +"."+mesg.getFormat));
 						    case IMG_GET_NOACK =>
 						      println("Error downloading images")
 						  }
@@ -487,7 +492,7 @@ class MulticastService {
 			        //Deleted image
 			        if(suc.getName.equals(Shutterbug.curnode.getName)){
 			          // TODO:Delete actual image from disk
-			          var file:File = new File("images/"+imageList.get(itr)+"."+refreshBuffer.get(grp.getName).get(imageList.get(itr)).getFormat)
+			        var file:File = new File(imgDirName+imageList.get(itr)+"."+refreshBuffer.get(grp.getName).get(imageList.get(itr)).getFormat)
 					  file.delete()
 			          println("Actual image deleted from "+Shutterbug.curnode.getName)
 			        }
@@ -514,7 +519,8 @@ class MulticastService {
 							println("Got the actual image data for add redistribution from " + suc.getName)
 					        //TODO: Save the actual image data to disk
 							
-							 ImageIO.write(picture.convertToBI(mesg.getData.asInstanceOf[ImageIcon]), mesg.getFormat, new File("images"+"/" + imageList.get(itr) +"."+mesg.getFormat));
+							 ImageIO.write(picture.convertToBI(mesg.getData.asInstanceOf[ImageIcon]), mesg.getFormat, 
+							     new File(imgDirName + imageList.get(itr) +"."+mesg.getFormat));
 						    case IMG_GET_NOACK =>
 						      println("Error downloading images")
 						  }
@@ -523,7 +529,7 @@ class MulticastService {
 			        //Delete image
 			         if(pre.getName.equals(Shutterbug.curnode.getName)){
 			          // TODO:Delete actual image from disk
-			           var file:File = new File("images/"+imageList.get(itr)+"."+refreshBuffer.get(grp.getName).get(imageList.get(itr)).getFormat)
+			           var file:File = new File(imgDirName+imageList.get(itr)+"."+refreshBuffer.get(grp.getName).get(imageList.get(itr)).getFormat)
 			           file.delete()
 			           println("Actual image deleted from "+Shutterbug.curnode.getName)
 			        }
