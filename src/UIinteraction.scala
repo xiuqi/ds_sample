@@ -327,6 +327,7 @@ object UIinteraction {
 	     img=new ImageIcon(imgPath);
 	     Shutterbug.mcs.displayImage(img, img_group.getName)
 		}
+		
 	     return
 	   }
 	    
@@ -374,6 +375,7 @@ object UIinteraction {
 					receiveWithin(waitTime)
 					{
 					  case TIMEOUT =>
+					    MessagePasser.multicast_dead(holder, img_group)
 					    if(count==2)
 					    {
 					      sending=false
@@ -381,6 +383,9 @@ object UIinteraction {
 					    else
 					    {
 					      println("Timeout");
+					      if(holderList.get(1) == null)
+					        return;
+					      
 					      holder=holderList.get(1)
 					    }
 					    
@@ -507,17 +512,23 @@ object UIinteraction {
 					    Shutterbug.curnode, img_group, null, format)
 					count=count+1;
 					println(count);
+					
 					userActor ! getImg
 					receiveWithin(waitTime)
 					{
 					  case TIMEOUT =>
+					    MessagePasser.multicast_dead(holder, img_group)
 					    if(count==2)
 					    {
+					      
 					      sending=false
 					    }
 					    else
 					    {
 					      println("Timeout");
+					      
+					      if(holderList.get(1) == null)
+					        return;
 					      holder=holderList.get(1)
 					    }
 					    
