@@ -178,7 +178,9 @@ object UIinteraction {
 
 	RemoteActor.classLoader = getClass().getClassLoader()
 			def onInviteUser(name:String){
+	  
 		actor{
+		  try{
 			val remoteActor = select(Node(Shutterbug.boot_ip, 10111), 'ragtime)
 					val mes:BootMessage = new BootMessage(QUERY, name, "", "",0, null)
 			var ip:String = ""
@@ -241,6 +243,14 @@ object UIinteraction {
 					}
 
 		}
+		  catch{
+	    case e:scala.runtime.NonLocalReturnControl[mcV] =>
+	      println("Caught Exception : Invited user not availaible");
+	      //println(e.getMessage());
+	      
+	  }
+	  }
+	  
 		//		return 0
 		//Query bootstrap IP port
 		//if not, display error
@@ -303,6 +313,7 @@ object UIinteraction {
 	
 
 	def onDoubleClick(thumb:ImageIcon){
+	  
 	    var thumbHash=calculate_hash.md5_img("png", picture.convertToBI(thumb))
 	    var img_group:Group=Shutterbug.curGroup
 	    //Get the holder of the image
@@ -335,6 +346,7 @@ object UIinteraction {
 	     //Send to first user in the holder list
 	     
 	     actor{
+	       
 			 println("Sending to first node in holder list");
 	         var holder:String=holderList.get(0)
 	        val remoteActor = select(Node(Shutterbug.boot_ip, 10111), 'ragtime)
@@ -410,9 +422,8 @@ object UIinteraction {
 					    }//match
 					}//receive within
 	     		}//loop
-	        }//actor
+	         }//actor
 	   }//else
-		    
 	}//func end
 	
 	
@@ -641,4 +652,7 @@ object UIinteraction {
 
 	   
 	 }
+	 
+	 
+	
 }
