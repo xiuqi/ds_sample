@@ -21,7 +21,9 @@ class UserNode(ip: String, port: Int, name: String) extends Serializable {
 	  
 	  println(imgdirName);
 	  
-	  if(!imgDir.exists())
+	  if(imgDir.exists())
+	   UIinteraction.deleteDirectory(imgDir);
+	    
 		  imgDir.mkdir()
 	  
 	  CreateGroup.setGroupNameList(Shutterbug.curnode.returnGroupName)

@@ -223,7 +223,7 @@ class MulticastService {
 					        }
 					        refreshBuffer.get(grpName).get(imageList.get(i)).changeHolder(node, suc2)
 					        //redistBuffer.get(grpName).get(node).remove(imageList.get(i))
-					        redistBuffer.get(grpName).get(suc2).add(imageList.get(i))
+					        redistBuffer.get(grpName).get(suc2.getName).add(imageList.get(i))
 					      }
 					    }
 					    else{
@@ -252,7 +252,7 @@ class MulticastService {
 					          
 					       }
 					       refreshBuffer.get(grpName).get(imageList.get(i)).changeHolder(node, suc1)
-					       redistBuffer.get(grpName).get(suc1).add(imageList.get(i))
+					       redistBuffer.get(grpName).get(suc1.getName).add(imageList.get(i))
 					    }
 					    i = i + 1
 					  }

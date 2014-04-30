@@ -257,10 +257,12 @@ class DisplayImage extends SimpleSwingApplication {
 				
 				case EditDone(`inputField`) => {
 				   var chatText:String = inputField.text
+				   
+				   if(chatText.length()!=0){
 			       updateChatArea(Shutterbug.curnode.getName + " : "+chatText+"\n")
 				   inputField.text=""
 			       UIinteraction.onChat(chatText)	
-				  
+				   }
 				}			
 				
 				
