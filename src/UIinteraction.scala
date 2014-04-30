@@ -389,7 +389,7 @@ object UIinteraction {
 					receiveWithin(waitTime)
 					{
 					  case TIMEOUT =>
-					    MessagePasser.multicast_dead(holder, img_group)
+					   // MessagePasser.multicast_dead(holder, img_group)
 					    if(count==2)
 					    {
 					      sending=false
@@ -530,7 +530,7 @@ object UIinteraction {
 					receiveWithin(waitTime)
 					{
 					  case TIMEOUT =>
-					    MessagePasser.multicast_dead(holder, img_group)
+					   // MessagePasser.multicast_dead(holder, img_group)
 					    if(count==2)
 					    {
 					      
