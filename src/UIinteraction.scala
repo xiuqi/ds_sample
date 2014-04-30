@@ -145,7 +145,7 @@ object UIinteraction {
 								  	  Shutterbug.mcs.setBuffers(mesg.getData.asInstanceOf[InvitationData], cur_grpname)
 								  	  transfer = true
 								  	  File.updateFile
-								  	
+								  	  Shutterbug.mcs.addNodeRedistribution(my_grp, Shutterbug.curnode);
 								  	}
 								  }
 								}
@@ -159,6 +159,8 @@ object UIinteraction {
 
 					it1.remove(); // avoids a ConcurrentModificationException
 		} 
+		
+		
 	}
 
 
