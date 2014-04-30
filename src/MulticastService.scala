@@ -174,6 +174,8 @@ class MulticastService {
 				
 				println("procDead lock")
 					var grpName:String = grp.getName
+					var imgDirName = grp.getName + Shutterbug.IMG_FOLDER
+					imgDirName=imgDirName.replaceFirst("/", "_");
 					println("In redistribution, current group is "+grpName)
 					var redList:HashMap[String,ArrayList[String]] = redistBuffer.get(grpName)
 					if(redList.containsKey(node.getName)){
@@ -208,6 +210,9 @@ class MulticastService {
 					              case mesg:UserMessage =>
 					                println("Got the actual image data for redistribution")
 					                //Save the actual image data to disk
+					                ImageIO.write(picture.convertToBI(mesg.getData.asInstanceOf[ImageIcon]),
+					                    mesg.getFormat, 
+							     new File(imgDirName + imageList.get(i) +"."+mesg.getFormat));
 					            }
 					          
 					        }
@@ -230,6 +235,9 @@ class MulticastService {
 					              case mesg:UserMessage =>
 					                println("Got the actual image data for redistribution")
 					                //Save the actual image data to disk
+					                 ImageIO.write(picture.convertToBI(mesg.getData.asInstanceOf[ImageIcon]),
+					                    mesg.getFormat, 
+							     new File(imgDirName + imageList.get(i) +"."+mesg.getFormat));
 					            }
 					          
 					       }
