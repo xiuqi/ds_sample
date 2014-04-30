@@ -25,7 +25,7 @@ object MessagePasser {
    				 if (dstNode.getName.equals(Shutterbug.curnode.getName))
    				 {   			 
    					 
-   		 var imgDirName:String=grp.getName+Shutterbug.IMG_FOLDER    
+   		 var imgDirName:String=Shutterbug.curnode.getName+grp.getName+Shutterbug.IMG_FOLDER    
    		 imgDirName=imgDirName.replaceFirst("/", "_");
    		 ImageIO.write(bufImg, message.getFormat, new File(imgDirName +thumbHash+"."+message.getFormat));
 
@@ -117,7 +117,7 @@ object MessagePasser {
    				 if (dstNode.getName.equals(Shutterbug.curnode.getName))
    				 {   			 
 
-   					 var imgDirName:String=grp.getName+Shutterbug.IMG_FOLDER    
+   					 var imgDirName:String=Shutterbug.curnode.getName+grp.getName+Shutterbug.IMG_FOLDER    
    							 imgDirName=imgDirName.replaceFirst("/", "_");
    				 ImageIO.write(bufImg, message.getFormat, new File(imgDirName +thumbHash+"."+message.getFormat));
 
