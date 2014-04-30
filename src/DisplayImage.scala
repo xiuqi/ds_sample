@@ -65,9 +65,8 @@ class DisplayImage extends SimpleSwingApplication {
 				chatArea.append(chatText)
 			}
 
-
 			def setPicList(pics:List[ImageIcon]){
-				list=pics
+						list=pics
 						ui.iconBox.listData_=(list)
 						println(list.toString)
 						println("list updated");
@@ -258,11 +257,11 @@ class DisplayImage extends SimpleSwingApplication {
 				case EditDone(`inputField`) => {
 				   var chatText:String = inputField.text
 				   
-				   if(chatText.length()!=0){
+				  // if(chatText.length()!=0){
 			       updateChatArea(Shutterbug.curnode.getName + " : "+chatText+"\n")
 				   inputField.text=""
 			       UIinteraction.onChat(chatText)	
-				   }
+				   //}
 				}			
 				
 				
