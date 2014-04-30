@@ -42,7 +42,7 @@ object MessagePasser {
    				 else
    				 {
    					 var remoteActor = select(Node(dstNode.getIP, dstNode.getPort), Symbol(dstNode.getName))
-   							 var waitTime:Long = 2000
+   							 var waitTime:Long = 5000
    							 var retryCount: Int = 0
    							 var sending: Boolean = false
 
