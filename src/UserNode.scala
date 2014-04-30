@@ -87,12 +87,12 @@ class UserNode(ip: String, port: Int, name: String) extends Serializable {
 	    nameList.add(groupList.get(itr).getName)
 	    itr = itr + 1
 	  }
-	  
-	  var array = nameList.toArray()
-	  var groupname = List.fromArray(array).asInstanceOf[List[String]]
-	  userLock.unlock()
-	  return groupname
-	}
+
+	var array = nameList.toArray()
+			var groupname = List.fromArray(array).asInstanceOf[List[String]]
+					userLock.unlock()
+					return groupname
+}
 
 //	def returnGroupFromName(groupName:String): Group = {
 //	 userLock.lock()
@@ -112,22 +112,22 @@ class UserNode(ip: String, port: Int, name: String) extends Serializable {
 //	  return null;
 //	}
 	
-	def returnGroupFromName(groupName:String, creator:String): Group = {
-	 userLock.lock()
-	  var size:Int = groupList.size()
-	  var itr:Int = 0
-	  while(itr<size){
-	    if(groupList.get(itr).getName.equalsIgnoreCase(groupName) && 
-	        groupList.get(itr).getCreator.equals(creator)){
-	      var ret_grp:Group = groupList.get(itr)
-	      userLock.unlock()	     
-	      return ret_grp
-	    }
-	    itr = itr + 1
-	  }
-	  userLock.unlock()
-	  return null;
-	}
+//	def returnGroupFromName(groupName:String, creator:String): Group = {
+//	 userLock.lock()
+//	  var size:Int = groupList.size()
+//	  var itr:Int = 0
+//	  while(itr<size){
+//	    if(groupList.get(itr).getName.equalsIgnoreCase(groupName) && 
+//	        groupList.get(itr).getCreator.equals(creator)){
+//	      var ret_grp:Group = groupList.get(itr)
+//	      userLock.unlock()	     
+//	      return ret_grp
+//	    }
+//	    itr = itr + 1
+//	  }
+//	  userLock.unlock()
+//	  return null;
+//	}
 	
 	def getGroupFromName(groupName:String): Group = {
 	 userLock.lock()
