@@ -174,7 +174,7 @@ class MulticastService {
 				
 				println("procDead lock")
 					var grpName:String = grp.getName
-					var imgDirName = grp.getName + Shutterbug.IMG_FOLDER
+					var imgDirName = Shutterbug.curnode.getName+grp.getName + Shutterbug.IMG_FOLDER
 					imgDirName=imgDirName.replaceFirst("/", "_");
 					println("In redistribution, current group is "+grpName)
 					var redList:HashMap[String,ArrayList[String]] = redistBuffer.get(grpName)
@@ -223,7 +223,7 @@ class MulticastService {
 					        }
 					        refreshBuffer.get(grpName).get(imageList.get(i)).changeHolder(node, suc2)
 					        //redistBuffer.get(grpName).get(node).remove(imageList.get(i))
-					        redistBuffer.get(grpName).get(suc2).add(imageList.get(i))
+					        redistBuffer.get(grpName).get(suc2.getName).add(imageList.get(i))
 					      }
 					    }
 					    else{
@@ -252,7 +252,7 @@ class MulticastService {
 					          
 					       }
 					       refreshBuffer.get(grpName).get(imageList.get(i)).changeHolder(node, suc1)
-					       redistBuffer.get(grpName).get(suc1).add(imageList.get(i))
+					       redistBuffer.get(grpName).get(suc1.getName).add(imageList.get(i))
 					    }
 					    i = i + 1
 					  }
@@ -299,7 +299,7 @@ class MulticastService {
 				{
 					var fmt:String = lkmsg.getFormat
 							// TODO: Delete image from disk 
-							var imgDirName= grp+Shutterbug.IMG_FOLDER
+							var imgDirName= Shutterbug.curnode.getName+grp+Shutterbug.IMG_FOLDER
 							imgDirName=imgDirName.replaceFirst("/", "_");
 							var file:File = new File(imgDirName+thumbHash+"."+fmt)
 							file.delete()
@@ -413,7 +413,7 @@ class MulticastService {
 			def addNodeRedistribution(grp:Group, newnode:UserNode){
 			  
 			  println("Starting to redistribute for new user")
-			  var imgDirName = grp.getName + Shutterbug.IMG_FOLDER
+			  var imgDirName = Shutterbug.curnode.getName+grp.getName + Shutterbug.IMG_FOLDER
 			  imgDirName=imgDirName.replaceFirst("/", "_");
 			  var members:ArrayList[UserNode] = grp.returnMembers
 			  if(members.size()<2){
