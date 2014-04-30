@@ -35,7 +35,7 @@ class ProcessingThread(inNode: UserNode) extends Runnable {
 							var thumbBufImg = picture.convertToBI(thumbIcon)
 							var thumbHash = calculate_hash.md5_img(message.getFormat, thumbBufImg)
 							var bufImg = picture.convertToBI(message.getData.asInstanceOf[ImageIcon])
-							var imgDirName = Shutterbug.curnode.getName+message.getGroup.getName + Shutterbug.IMG_FOLDER
+							var imgDirName = message.getGroup.getName + Shutterbug.IMG_FOLDER
 							imgDirName=imgDirName.replaceFirst("/", "_");
 							ImageIO.write(bufImg, message.getFormat, new File(imgDirName +thumbHash+"."+message.getFormat));
 
@@ -153,7 +153,7 @@ class ProcessingThread(inNode: UserNode) extends Runnable {
 							
 							case IMG_GET =>
 							  println("Get IMG_GET: " + message)
-							  var imgDirName = Shutterbug.curnode.getName+message.getGroup.getName + Shutterbug.IMG_FOLDER
+							  var imgDirName = message.getGroup.getName + Shutterbug.IMG_FOLDER
 							  imgDirName=imgDirName.replaceFirst("/", "_");
 							  var imgPath:String=imgDirName+message.getData.asInstanceOf[String]+"."+message.getFormat
 							  var image:File= new File(imgPath)

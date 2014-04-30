@@ -15,7 +15,7 @@ class UserNode(ip: String, port: Int, name: String) extends Serializable {
 	  groupList.add(dstGrp)
 	  userLock.unlock()
 	  
-	  var imgdirName:String = Shutterbug.curnode.getName+dstGrp.getName+"_images";
+	  var imgdirName:String = dstGrp.getName+"_images";
 	  imgdirName=imgdirName.replace("/", "_");
 	  var imgDir:File = new File(imgdirName);
 	  

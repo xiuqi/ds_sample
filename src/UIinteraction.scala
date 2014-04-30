@@ -331,7 +331,7 @@ object UIinteraction {
 	   if(holderList.contains(Shutterbug.curnode.getName)){
 	     //get from the images folder
 	     println("Retrieving for my images")
-	      var imgDirName = Shutterbug.curnode.getName+img_group.getName + Shutterbug.IMG_FOLDER
+	      var imgDirName = img_group.getName + Shutterbug.IMG_FOLDER
 	      imgDirName=imgDirName.replaceFirst("/", "_");
 	     var imgPath:String =imgDirName+thumbHash+"."+format
 	     var image:File= new File(imgPath)
@@ -378,6 +378,7 @@ object UIinteraction {
 						println("IP Address empty")
 						return
 					}
+
 					var waitTime:Long = 5000
 					val userActor = select(Node(ip, port), Symbol(holder))
 					var getImg:UserMessage = new UserMessage(IMG_GET, thumbHash,
@@ -473,7 +474,7 @@ object UIinteraction {
 	   if(holderList.contains(Shutterbug.curnode.getName)){
 	     //get from the images folder
 	     println("Retrieving for my images")
-	      var imgDirName = Shutterbug.curnode.getName+img_group.getName + Shutterbug.IMG_FOLDER
+	      var imgDirName = img_group.getName + Shutterbug.IMG_FOLDER
 	      imgDirName=imgDirName.replaceFirst("/", "_");
 	     var imgPath:String =imgDirName+thumbHash+"."+format
 	     var image:File= new File(imgPath)
