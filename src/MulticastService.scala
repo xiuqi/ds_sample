@@ -201,10 +201,10 @@ class MulticastService {
 					          //query the suc1 and save the actual image
 					          
 					            var remoteActor = select(Node(suc1.getIP, suc1.getPort), Symbol(suc1.getName))
-					            var mes:UserMessage = new UserMessage(IMG_REQ,imageList.get(i) , Shutterbug.curnode, 
+					            var mes:UserMessage = new UserMessage(IMG_GET,imageList.get(i) , Shutterbug.curnode, 
 					                Shutterbug.curnode.getGroupFromName(grpName), suc1, 
 					                refreshBuffer.get(grpName).get(imageList.get(i)).getFormat)
-					            println("sending IMG_REQ to "+suc1.getName)
+					            println("sending IMG_GET to "+suc1.getName)
 					            remoteActor !? mes
 					            match{
 					              case mesg:UserMessage =>
@@ -226,10 +226,10 @@ class MulticastService {
 					          var newnode:UserNode =  Shutterbug.curnode.getGroupFromName(grpName).getNodeFromName(holderList.get(otherIndex))
 					    	  
 					            var remoteActor = select(Node(newnode.getIP, newnode.getPort), Symbol(newnode.getName))
-					            var mes:UserMessage = new UserMessage(IMG_REQ,imageList.get(i) , Shutterbug.curnode, 
+					            var mes:UserMessage = new UserMessage(IMG_GET,imageList.get(i) , Shutterbug.curnode, 
 					            Shutterbug.curnode.getGroupFromName(grpName), newnode, 
 					            refreshBuffer.get(grpName).get(imageList.get(i)).getFormat)
-					            println("sending IMG_REQ to "+newnode.getName)
+					            println("sending IMG_GET to "+newnode.getName)
 					            remoteActor !? mes
 					            match{
 					              case mesg:UserMessage =>
@@ -428,7 +428,7 @@ class MulticastService {
 			        var remoteActor = select(Node(oldNode.getIP, oldNode.getPort), Symbol(oldNode.getName))
 					var mes:UserMessage = new UserMessage(IMG_GET,imageList.get(itr) , Shutterbug.curnode, 
 							grp, oldNode, refreshBuffer.get(grp.getName).get(imageList.get(itr)).getFormat)
-					println("sending IMG_REQ to "+oldNode.getName)
+					println("sending IMG_GET to "+oldNode.getName)
 					remoteActor !? mes
 					match{
 						case mesg:UserMessage =>
@@ -482,7 +482,7 @@ class MulticastService {
 			          var remoteActor = select(Node(pre.getIP, pre.getPort), Symbol(pre.getName))
 					  var mes:UserMessage = new UserMessage(IMG_GET,imageList.get(itr) , Shutterbug.curnode, 
 							grp, pre, refreshBuffer.get(grp.getName).get(imageList.get(itr)).getFormat)
-					  println("sending IMG_REQ to "+pre.getName)
+					  println("sending IMG_GET to "+pre.getName)
 					  remoteActor !? mes
 					  match{
 						  case mesg:UserMessage =>
@@ -518,7 +518,7 @@ class MulticastService {
 			          var remoteActor = select(Node(suc.getIP, suc.getPort), Symbol(suc.getName))
 					  var mes:UserMessage = new UserMessage(IMG_GET,imageList.get(itr) , Shutterbug.curnode, 
 							grp, suc, refreshBuffer.get(grp.getName).get(imageList.get(itr)).getFormat)
-					  println("sending IMG_REQ to "+suc.getName)
+					  println("sending IMG_GET to "+suc.getName)
 					  remoteActor !? mes
 					  match{
 						  case mesg:UserMessage =>
