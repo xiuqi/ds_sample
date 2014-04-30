@@ -152,17 +152,21 @@ class ProcessingThread(inNode: UserNode) extends Runnable {
 							  Shutterbug.mcs.addImageCaption(req_grp.getName, imgHash, caption)							      
 							
 							case IMG_GET =>
+							  println("Get IMG_GET: " + message)
 							  var imgDirName = message.getGroup.getName + Shutterbug.IMG_FOLDER
 							  imgDirName=imgDirName.replaceFirst("/", "_");
 							  var imgPath:String=imgDirName+message.getData.asInstanceOf[String]+"."+message.getFormat
 							  var image:File= new File(imgPath)
-							  
+							  println("Check for " + imgPath)
 							  if(image.exists()){
+							    
+							    println("image found")
 							  var img:ImageIcon=new ImageIcon(imgPath)
 							  var format:String = Shutterbug.mcs.getImageLookup(message.getGroup.getName, message.getData.asInstanceOf[String]).getFormat
 							  var replyImg:UserMessage=new UserMessage(IMG_GET_ACK, img, Shutterbug.curnode, message.getGroup,
 							      null, format)
 							  reply(replyImg)
+							  println("replied")
 							  }
 							else{
 							  println("Image not present")
