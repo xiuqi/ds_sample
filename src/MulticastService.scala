@@ -204,10 +204,15 @@ class MulticastService {
 					            var mes:UserMessage = new UserMessage(IMG_GET,imageList.get(i) , Shutterbug.curnode, 
 					                Shutterbug.curnode.getGroupFromName(grpName), suc1, 
 					                refreshBuffer.get(grpName).get(imageList.get(i)).getFormat)
+					            
+					     
 					            println("sending IMG_GET to "+suc1.getName)
+					            refreshLock.unlock()	
+					            
 					            remoteActor !? mes
 					            match{
 					              case mesg:UserMessage =>
+					                refreshLock.lock()	
 					                println("Got the actual image data for redistribution")
 					                //Save the actual image data to disk
 					                ImageIO.write(picture.convertToBI(mesg.getData.asInstanceOf[ImageIcon]),
@@ -230,9 +235,12 @@ class MulticastService {
 					            Shutterbug.curnode.getGroupFromName(grpName), newnode, 
 					            refreshBuffer.get(grpName).get(imageList.get(i)).getFormat)
 					            println("sending IMG_GET to "+newnode.getName)
+					            refreshLock.unlock()	
 					            remoteActor !? mes
 					            match{
 					              case mesg:UserMessage =>
+					                
+					                refreshLock.lock()	
 					                println("Got the actual image data for redistribution")
 					                //Save the actual image data to disk
 					                 ImageIO.write(picture.convertToBI(mesg.getData.asInstanceOf[ImageIcon]),
