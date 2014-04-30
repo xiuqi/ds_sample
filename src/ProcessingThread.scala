@@ -100,8 +100,7 @@ class ProcessingThread(inNode: UserNode) extends Runnable {
 							  Shutterbug.mcs.addNodeRedistribution(new_grp, Shutterbug.curnode)
 							  
 							case NEW_MEMBER =>
-							  var req_grp:Group = Shutterbug.curnode.returnGroupFromName(message.getGroup.getName, 
-							      message.getGroup.getCreator)
+							  var req_grp:Group = Shutterbug.curnode.getGroupFromName(message.getGroup.getName)
 							  req_grp.addMembers(message.getData.asInstanceOf[UserNode].getName, message.getData.asInstanceOf[UserNode])
 							  Shutterbug.mcs.addInvitedUser(message.getData.asInstanceOf[UserNode].getName, message.getGroup.getName)
 							  Shutterbug.mcs.addNodeRedistribution(req_grp,message.getData.asInstanceOf[UserNode])
